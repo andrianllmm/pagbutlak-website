@@ -1,8 +1,8 @@
 {
-  "name": "",
+  "name": "pagbutlak-website",
   "version": "1.0.0",
-  "description": "Website template for Payload",
-  "license": "MIT",
+  "description": "Official website of Pagbutlak UPV",
+  "license": "Apache-2.0",
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
