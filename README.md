@@ -22,28 +22,33 @@ This project is the official website for the student and community publication o
 
 - [pnpm](https://pnpm.io/installation/)
 
-- [PostgreSQL](https://www.postgresql.org/)
+- [PostgreSQL](https://www.postgresql.org/) (optional)
+
+- [Docker](https://docs.docker.com/get-docker/) (optional)
 
 ### Installation
 
 1. Clone the repository
 1. `cp .env.example .env` to copy the example environment variables
-1. Create a local PostgreSQL database and update the `DATABASE_URI` in the `.env` file
 
-   ```bash
-   -- Switch to postgres user and open psql
-   sudo -i -u postgres
-   psql
+#### Option 1: Local (Manual Setup)
 
-   -- Create user and database
-   CREATE USER pagbutlakuser WITH PASSWORD 'pagbutlakpass';
-   CREATE DATABASE pagbutlakdb OWNER pagbutlakuser;
-   GRANT ALL PRIVILEGES ON DATABASE pagbutlakdb TO pagbutlakuser;
-   ```
-
+1. Create a local PostgreSQL database.
 1. `pnpm install` to install dependencies
 1. `pnpm dev` start the dev server
+
+#### Option 2: Docker
+
+1. Start the services
+   ```bash
+   docker-compose up
+   ```
+
+### Usage
+
 1. Open [http://localhost:3000](http://localhost:3000) to open the app in your browser
+1. Go to [http://localhost:3000/admin](http://localhost:3000/admin) to open the admin panel
+1. Seed the database by clicking the seed button.
 
 ## Contributing
 
