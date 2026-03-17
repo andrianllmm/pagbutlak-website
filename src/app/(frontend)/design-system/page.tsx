@@ -105,7 +105,7 @@ export default function Page() {
               title: 'Card 1',
               meta: { description: 'This is the first card.' },
             }}
-            relationTo="posts"
+            relationTo="articles"
           />
           <Card
             doc={{
@@ -113,7 +113,7 @@ export default function Page() {
               title: 'Card 2',
               meta: { description: 'This is the second card.' },
             }}
-            relationTo="posts"
+            relationTo="articles"
           />
           <Card
             doc={{
@@ -121,7 +121,7 @@ export default function Page() {
               title: 'Card 3',
               meta: { description: 'This is the third card.' },
             }}
-            relationTo="posts"
+            relationTo="articles"
           />
         </div>
       </section>
