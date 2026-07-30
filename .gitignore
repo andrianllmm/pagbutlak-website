@@ -13,10 +13,16 @@ public/media/
 public/robots.txt
 public/sitemap*.xml
 
-
 # Playwright
 node_modules/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# AI tools
+.claude
+.codex
+.cursor
+.cursorrules
+.gemini
