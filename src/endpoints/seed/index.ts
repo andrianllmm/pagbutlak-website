@@ -75,7 +75,7 @@ export const seed = async ({
     depth: 0,
     where: {
       email: {
-        equals: 'demo-author@example.com',
+        in: ['demo-author@example.com', 'demo-user@example.com'],
       },
     },
   })
@@ -84,7 +84,7 @@ export const seed = async ({
 
   const image = loadLocalFile('image.jpg')
 
-  const [demoUser, imageDoc] = await Promise.all([
+  const [, imageDoc] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
@@ -179,6 +179,9 @@ export const seed = async ({
   await payload.update({
     id: article1Doc.id,
     collection: 'articles',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedArticles: [article2Doc.id, article3Doc.id],
     },
@@ -186,6 +189,9 @@ export const seed = async ({
   await payload.update({
     id: article2Doc.id,
     collection: 'articles',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedArticles: [article1Doc.id, article3Doc.id],
     },
@@ -193,6 +199,9 @@ export const seed = async ({
   await payload.update({
     id: article3Doc.id,
     collection: 'articles',
+    context: {
+      disableRevalidate: true,
+    },
     data: {
       relatedArticles: [article1Doc.id, article2Doc.id],
     },
@@ -204,6 +213,9 @@ export const seed = async ({
     payload.create({
       collection: 'pages',
       depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
       data: home({ heroImage: imageDoc, metaImage: imageDoc }),
     }),
   ])
@@ -213,6 +225,9 @@ export const seed = async ({
   await Promise.all([
     payload.updateGlobal({
       slug: 'header',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {
@@ -248,6 +263,9 @@ export const seed = async ({
     }),
     payload.updateGlobal({
       slug: 'footer',
+      context: {
+        disableRevalidate: true,
+      },
       data: {
         navItems: [
           {

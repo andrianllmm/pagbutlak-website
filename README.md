@@ -47,7 +47,33 @@ This project is the official website for the student and community publication o
 
 1. Open [http://localhost:3000](http://localhost:3000) to open the app in your browser
 1. Go to [http://localhost:3000/admin](http://localhost:3000/admin) to open the admin panel
-1. Seed the database by clicking the seed button.
+1. Seed the database using one of the options below.
+
+### Seeding the Database
+
+Seeding clears existing content in the seeded collections and repopulates them with demo data. This drops data in those collections, so only run it against a database you're OK resetting.
+
+#### Option 1: Admin UI
+
+With the app running and an admin user logged in, click the "Seed your database" button on the admin dashboard. This calls `POST /next/seed`.
+
+#### Option 2: CLI
+
+Requires at least one existing user in the `users` collection (create one via the admin panel first).
+
+```bash
+pnpm seed
+```
+
+Or inside Docker:
+
+```bash
+docker compose exec payload pnpm seed
+```
+
+The CLI script (`src/scripts/seed.ts`) uses `DATABASE_URI` from your `.env`, so it can seed any environment you point it at, including a remote/prod database.
+
+If your `.env` has S3 storage disabled (default for local dev) but the target database is meant to be served with S3 enabled (e.g. prod), uploaded seed media will go to local disk instead of the S3 bucket and won't be visible on that deployment. Export the `S3_*` vars for that one command when seeding an S3-backed environment.
 
 ## Contributing
 
