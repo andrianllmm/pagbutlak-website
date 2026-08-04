@@ -4,6 +4,7 @@ import * as migration_20260317_131609_add_article_section_field from './20260317
 import * as migration_20260715_024628_add_authors from './20260715_024628_add_authors'
 import * as migration_20260723_051537_add_search_published_at_and_reading_time_fields from './20260723_051537_add_search_published_at_and_reading_time_fields'
 import * as migration_20260723_120033_add_articles_reading_time_field from './20260723_120033_add_articles_reading_time_field'
+import * as migration_20260804_062947_add_media_prefix_field from './20260804_062947_add_media_prefix_field'
 
 export const migrations = [
   {
@@ -35,5 +36,10 @@ export const migrations = [
     up: migration_20260723_120033_add_articles_reading_time_field.up,
     down: migration_20260723_120033_add_articles_reading_time_field.down,
     name: '20260723_120033_add_articles_reading_time_field',
+  },
+  {
+    up: migration_20260804_062947_add_media_prefix_field.up,
+    down: migration_20260804_062947_add_media_prefix_field.down,
+    name: '20260804_062947_add_media_prefix_field',
   },
 ]
