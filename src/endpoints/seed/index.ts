@@ -1,6 +1,7 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { home } from './home'
+import { about } from './about'
 import { terms } from './terms'
 import { privacy } from './privacy'
 import { image1 } from './image'
@@ -226,6 +227,14 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
+      data: about({ metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
       data: terms({ metaImage: imageDoc }),
     }),
     payload.create({
@@ -286,6 +295,13 @@ export const seed = async ({
       },
       data: {
         navItems: [
+          {
+            link: {
+              type: 'custom',
+              label: 'About',
+              url: '/about',
+            },
+          },
           {
             link: {
               type: 'custom',
