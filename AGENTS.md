@@ -71,6 +71,7 @@ For non-Docker setup, ensure `DATABASE_URI` points to a local Postgres instance 
 | `pnpm payload migrate:status`        | Check migration status            |
 | `pnpm generate:types`                | Regenerate `src/payload-types.ts` |
 | `pnpm generate:importmap`            | Regenerate Payload import map     |
+| `pnpm seed`                          | Seed the database via CLI         |
 
 Payload CLI commands must run **inside the Docker container** if using Docker:
 
@@ -128,6 +129,19 @@ After adding new components used in the Payload admin panel (custom fields, cust
 ```bash
 pnpm generate:importmap
 ```
+
+### Seeding - CLI vs Admin UI
+
+`seed()` in `src/endpoints/seed/index.ts` is the single source of truth for seed data, used by two entry points:
+
+- Admin UI: the "Seed your database" button (`src/components/BeforeDashboard/SeedButton`) calls `POST /next/seed` (`src/app/(frontend)/next/seed/route.ts`), which requires an authenticated session.
+- CLI: `pnpm seed` runs `src/scripts/seed.ts` via `payload run`, using the Local API directly (no running app server or session needed). Requires at least one existing user in the `users` collection to act as. This is the only way to seed a database that isn't reachable through a browser (e.g. prod via `DATABASE_URI`).
+
+Seeding is destructive — it clears the seeded collections (`src/endpoints/seed/index.ts:11-20`) before repopulating them. Never run it against a database with content you want to keep.
+
+Any new `payload.create`/`update`/`updateGlobal` call added to `seed()` must pass `context: { disableRevalidate: true }`. Without it, Next.js hooks call `revalidatePath`/`revalidateTag` outside of a request context, which throws when seeding is run standalone (CLI, or via `yarn seed`-style scripts without an active server).
+
+If the target database has `s3Storage` enabled (S3 env vars set) but the environment running the seed script does not, uploaded media rows will be created but the actual files will be written to local disk instead of the S3 bucket — the media won't render on any environment that expects S3. Export the `S3_*` vars for that command when seeding an S3-backed database, e.g. `S3_BUCKET=... S3_ACCESS_KEY_ID=... pnpm seed` (see `useS3` in `src/plugins/index.ts`).
 
 ## Code Conventions
 
