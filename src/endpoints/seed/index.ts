@@ -1,6 +1,7 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { home } from './home'
+import { terms } from './terms'
 import { image1 } from './image'
 import { article1 } from './article-1'
 import { article2 } from './article-2'
@@ -218,6 +219,14 @@ export const seed = async ({
       },
       data: home({ heroImage: imageDoc, metaImage: imageDoc }),
     }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: terms({ metaImage: imageDoc }),
+    }),
   ])
 
   payload.logger.info(`— Seeding globals...`)
@@ -268,6 +277,13 @@ export const seed = async ({
       },
       data: {
         navItems: [
+          {
+            link: {
+              type: 'custom',
+              label: 'Terms of Use',
+              url: '/terms',
+            },
+          },
           {
             link: {
               type: 'custom',
