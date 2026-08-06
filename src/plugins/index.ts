@@ -103,6 +103,7 @@ export const plugins: Plugin[] = [
   payloadCloudPlugin(),
   s3Storage({
     enabled: useS3,
+    alwaysInsertFields: true,
     collections: {
       media: {
         prefix: 'media',
