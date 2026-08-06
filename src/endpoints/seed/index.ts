@@ -2,6 +2,8 @@ import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from '
 
 import { home } from './home'
 import { about } from './about'
+import { contact } from './contact'
+import { contactForm } from './contact-form'
 import { terms } from './terms'
 import { privacy } from './privacy'
 import { image1 } from './image'
@@ -210,6 +212,17 @@ export const seed = async ({
     },
   })
 
+  payload.logger.info(`— Seeding forms...`)
+
+  const contactFormDoc = await payload.create({
+    collection: 'forms',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: contactForm(),
+  })
+
   payload.logger.info(`— Seeding pages...`)
 
   await Promise.all([
@@ -228,6 +241,14 @@ export const seed = async ({
         disableRevalidate: true,
       },
       data: about({ metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: contact({ form: contactFormDoc, metaImage: imageDoc }),
     }),
     payload.create({
       collection: 'pages',
@@ -300,6 +321,13 @@ export const seed = async ({
               type: 'custom',
               label: 'About',
               url: '/about',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Contact',
+              url: '/contact',
             },
           },
           {
