@@ -4,6 +4,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
+import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
@@ -43,7 +44,12 @@ export default async function ArticlePage({ params: paramsPromise }: Args) {
   const url = '/articles/' + decodedSlug
   const article = await queryArticleBySlug({ slug: decodedSlug })
 
-  if (!article) return <PayloadRedirects url={url} />
+  if (!article) {
+    const match = await queryArticleBySlugPrefix({ slugPrefix: decodedSlug })
+    if (match) redirect(`/articles/${match.slug}`)
+
+    return <PayloadRedirects url={url} />
+  }
 
   return (
     <article className="pt-12 pb-16">
@@ -125,4 +131,32 @@ const queryArticleBySlug = cache(async ({ slug }: { slug: string }) => {
     },
   })
   return result.docs?.[0] || null
+})
+
+// Auto-completes partial slugs (e.g. "global-" -> "global-gaze") when exactly one article matches.
+const MIN_SLUG_PREFIX_LENGTH = 4
+
+const queryArticleBySlugPrefix = cache(async ({ slugPrefix }: { slugPrefix: string }) => {
+  if (slugPrefix.length < MIN_SLUG_PREFIX_LENGTH) return null
+
+  const { isEnabled: draft } = await draftMode()
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'articles',
+    draft,
+    limit: 10,
+    overrideAccess: draft,
+    pagination: false,
+    select: {
+      slug: true,
+    },
+    where: {
+      slug: {
+        like: slugPrefix,
+      },
+    },
+  })
+
+  const matches = result.docs.filter((doc) => doc.slug?.startsWith(slugPrefix))
+  return matches.length === 1 ? matches[0] : null
 })

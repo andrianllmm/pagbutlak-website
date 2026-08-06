@@ -4,6 +4,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
+import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 
 import { Globe, LinkIcon } from 'lucide-react'
@@ -43,6 +44,9 @@ export default async function AuthorPage({ params: paramsPromise }: Args) {
   const author = await queryAuthorBySlug({ slug: decodedSlug })
 
   if (!author) {
+    const match = await queryAuthorBySlugPrefix({ slugPrefix: decodedSlug })
+    if (match) redirect(`/authors/${match.slug}`)
+
     return <PayloadRedirects url={url} />
   }
 
@@ -181,4 +185,34 @@ const queryAuthorBySlug = cache(async ({ slug }: { slug: string }) => {
   })
 
   return result.docs?.[0] || null
+})
+
+// Auto-completes partial slugs (e.g. "jane-" -> "jane-doe") when exactly one author matches.
+const MIN_SLUG_PREFIX_LENGTH = 4
+
+const queryAuthorBySlugPrefix = cache(async ({ slugPrefix }: { slugPrefix: string }) => {
+  if (slugPrefix.length < MIN_SLUG_PREFIX_LENGTH) return null
+
+  const { isEnabled: draft } = await draftMode()
+
+  const payload = await getPayload({ config: configPromise })
+
+  const result = await payload.find({
+    collection: 'authors',
+    draft,
+    limit: 10,
+    overrideAccess: draft,
+    pagination: false,
+    select: {
+      slug: true,
+    },
+    where: {
+      slug: {
+        like: slugPrefix,
+      },
+    },
+  })
+
+  const matches = result.docs.filter((doc) => doc.slug?.startsWith(slugPrefix))
+  return matches.length === 1 ? matches[0] : null
 })
