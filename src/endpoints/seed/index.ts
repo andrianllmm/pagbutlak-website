@@ -1,6 +1,11 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
 import { home } from './home'
+import { about } from './about'
+import { contact } from './contact'
+import { contactForm } from './contact-form'
+import { terms } from './terms'
+import { privacy } from './privacy'
 import { image1 } from './image'
 import { article1 } from './article-1'
 import { article2 } from './article-2'
@@ -207,6 +212,17 @@ export const seed = async ({
     },
   })
 
+  payload.logger.info(`— Seeding forms...`)
+
+  const contactFormDoc = await payload.create({
+    collection: 'forms',
+    depth: 0,
+    context: {
+      disableRevalidate: true,
+    },
+    data: contactForm(),
+  })
+
   payload.logger.info(`— Seeding pages...`)
 
   await Promise.all([
@@ -217,6 +233,38 @@ export const seed = async ({
         disableRevalidate: true,
       },
       data: home({ heroImage: imageDoc, metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: about({ metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: contact({ form: contactFormDoc, metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: terms({ metaImage: imageDoc }),
+    }),
+    payload.create({
+      collection: 'pages',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: privacy({ metaImage: imageDoc }),
     }),
   ])
 
@@ -268,6 +316,34 @@ export const seed = async ({
       },
       data: {
         navItems: [
+          {
+            link: {
+              type: 'custom',
+              label: 'About',
+              url: '/about',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Contact',
+              url: '/contact',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Terms of Use',
+              url: '/terms',
+            },
+          },
+          {
+            link: {
+              type: 'custom',
+              label: 'Privacy Policy',
+              url: '/privacy',
+            },
+          },
           {
             link: {
               type: 'custom',
