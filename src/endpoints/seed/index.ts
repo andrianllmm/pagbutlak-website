@@ -58,15 +58,15 @@ export const seed = async ({
     ),
   )
 
-  await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
-  )
+  for (const collection of collections) {
+    await payload.db.deleteMany({ collection, req, where: {} })
+  }
 
-  await Promise.all(
-    collections
-      .filter((collection) => Boolean(payload.collections[collection].config.versions))
-      .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
-  )
+  for (const collection of collections) {
+    if (payload.collections[collection].config.versions) {
+      await payload.db.deleteVersions({ collection, req, where: {} })
+    }
+  }
 
   payload.logger.info(`— Seeding demo author and user...`)
 
