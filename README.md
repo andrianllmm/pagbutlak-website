@@ -75,6 +75,45 @@ The CLI script (`src/scripts/seed.ts`) uses `DATABASE_URI` from your `.env`, so 
 
 If your `.env` has S3 storage disabled (default for local dev) but the target database is meant to be served with S3 enabled (e.g. prod), uploaded seed media will go to local disk instead of the S3 bucket and won't be visible on that deployment. Export the `S3_*` vars for that one command when seeding an S3-backed environment.
 
+## Testing
+
+The project has three layers of tests: unit, integration, and end-to-end (E2E).
+
+| Layer       | Tool                       | Location                     | Command         |
+| ----------- | -------------------------- | ---------------------------- | --------------- |
+| Unit        | Vitest                     | `src/**/*.spec.ts`           | `pnpm test:int` |
+| Integration | Vitest + Payload Local API | `tests/int/**/*.int.spec.ts` | `pnpm test:int` |
+| E2E         | Playwright                 | `tests/e2e/**/*.e2e.spec.ts` | `pnpm test:e2e` |
+
+```bash
+# Run everything (unit + integration, then E2E)
+pnpm test
+
+# Unit + integration only
+pnpm test:int
+
+# E2E only
+pnpm test:e2e
+```
+
+Integration tests require a running Postgres database (same `DATABASE_URI` as the app). If you're using Docker, run them inside the container:
+
+```bash
+docker compose exec payload pnpm test:int
+```
+
+E2E tests require Playwright's browser binaries. If they aren't installed yet:
+
+```bash
+pnpm exec playwright install chromium
+```
+
+### Where new tests go
+
+- **Unit:** Pure functions and logic with no DB or browser dependency (utilities, access control functions, hooks). Colocate as `*.spec.ts` next to the source file.
+- **Integration:** Anything that needs a real Payload/Postgres instance (collection access control, hooks against the DB, seeding). Add to `tests/int/` as `*.int.spec.ts`.
+- **E2E:** Real user flows through the browser (navigation, forms, admin flows). Add to `tests/e2e/` as `*.e2e.spec.ts`.
+
 ## Contributing
 
 Contributions are welcome!
