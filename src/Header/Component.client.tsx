@@ -1,4 +1,5 @@
 'use client'
+import { cn } from '@/utilities/ui'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -6,7 +7,8 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header } from '@/payload-types'
 
-import { Logo } from '@/components/brand/Logo'
+import { HeaderDate } from '@/components/HeaderDate'
+import { Wordmark } from '@/components/brand/Wordmark'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -18,6 +20,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const [theme, setTheme] = useState<string | null>(null)
   const { headerTheme, setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [homeMastheadPassed, setHomeMastheadPassed] = useState(false)
 
   useEffect(() => {
     setHeaderTheme(null)
@@ -29,13 +33,67 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [headerTheme])
 
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 0)
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
+  const isHomepage = pathname === '/'
+
+  useEffect(() => {
+    if (!isHomepage) return
+
+    setHomeMastheadPassed(false)
+
+    const masthead = document.getElementById('home-masthead')
+    if (!masthead) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setHomeMastheadPassed(!entry.isIntersecting),
+      {
+        threshold: 0,
+      },
+    )
+    observer.observe(masthead)
+
+    return () => observer.disconnect()
+  }, [isHomepage])
+
+  const showWordmark = !isHomepage || homeMastheadPassed
+
   return (
-    <header className="container relative z-20   " {...(theme ? { 'data-theme': theme } : {})}>
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo className="text-foreground" />
-        </Link>
-        <HeaderNav data={data} />
+    <header
+      className={cn(
+        'sticky top-0 z-20 border-b bg-background transition-colors',
+        isScrolled ? 'border-border' : 'border-transparent',
+      )}
+      {...(theme ? { 'data-theme': theme } : {})}
+    >
+      <div className="container">
+        <div className="py-4 grid grid-cols-2 md:grid-cols-3 items-center gap-4">
+          <HeaderDate />
+
+          <div className="hidden md:flex justify-self-center">
+            <Link
+              href="/"
+              aria-label="Pagbutlak home"
+              className={cn(
+                'transition-opacity duration-300',
+                showWordmark ? 'opacity-100' : 'opacity-0 pointer-events-none',
+              )}
+              tabIndex={showWordmark ? undefined : -1}
+              aria-hidden={!showWordmark}
+            >
+              <Wordmark className="h-[32px] text-foreground" />
+            </Link>
+          </div>
+
+          <div className="justify-self-end">
+            <HeaderNav data={data} />
+          </div>
+        </div>
       </div>
     </header>
   )
