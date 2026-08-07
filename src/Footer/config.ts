@@ -10,18 +10,66 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
-      name: 'navItems',
+      name: 'description',
+      type: 'textarea',
+      admin: {
+        description: 'A short one- or two-sentence description of the website.',
+      },
+    },
+    {
+      name: 'socialLinks',
+      type: 'group',
+      fields: [
+        {
+          name: 'facebook',
+          type: 'text',
+        },
+        {
+          name: 'x',
+          label: 'X (Twitter)',
+          type: 'text',
+        },
+        {
+          name: 'instagram',
+          type: 'text',
+        },
+        {
+          name: 'youtube',
+          type: 'text',
+        },
+      ],
+    },
+    {
+      name: 'navGroups',
       type: 'array',
       fields: [
-        link({
-          appearances: false,
-        }),
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'navItems',
+          type: 'array',
+          fields: [
+            link({
+              appearances: false,
+            }),
+          ],
+          maxRows: 6,
+          admin: {
+            initCollapsed: true,
+            components: {
+              RowLabel: '@/Footer/RowLabel#RowLabel',
+            },
+          },
+        },
       ],
-      maxRows: 6,
+      maxRows: 4,
       admin: {
         initCollapsed: true,
         components: {
-          RowLabel: '@/Footer/RowLabel#RowLabel',
+          RowLabel: '@/Footer/GroupRowLabel#GroupRowLabel',
         },
       },
     },
