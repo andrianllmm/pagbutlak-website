@@ -50,15 +50,17 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <Providers>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
+          <div className="flex min-h-screen flex-col">
+            <AdminBar
+              adminBarProps={{
+                preview: isEnabled,
+              }}
+            />
 
-          <Header />
-          {children}
-          <Footer />
+            <Header />
+            <main className="flex-1 min-h-screen">{children}</main>
+            <Footer />
+          </div>
         </Providers>
       </body>
     </html>

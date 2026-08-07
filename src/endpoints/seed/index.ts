@@ -1,15 +1,12 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
 
-import { home } from './home'
 import { about } from './about'
 import { contact } from './contact'
 import { contactForm } from './contact-form'
 import { terms } from './terms'
 import { privacy } from './privacy'
 import { image1 } from './image'
-import { article1 } from './article-1'
-import { article2 } from './article-2'
-import { article3 } from './article-3'
+import { generateSeedArticles } from './articles'
 import path from 'path'
 import fs from 'fs'
 
@@ -52,9 +49,7 @@ export const seed = async ({
     globals.map((global) =>
       payload.updateGlobal({
         slug: global,
-        data: {
-          navItems: [],
-        },
+        data: {},
         depth: 0,
         context: {
           disableRevalidate: true,
@@ -63,15 +58,15 @@ export const seed = async ({
     ),
   )
 
-  await Promise.all(
-    collections.map((collection) => payload.db.deleteMany({ collection, req, where: {} })),
-  )
+  for (const collection of collections) {
+    await payload.db.deleteMany({ collection, req, where: {} })
+  }
 
-  await Promise.all(
-    collections
-      .filter((collection) => Boolean(payload.collections[collection].config.versions))
-      .map((collection) => payload.db.deleteVersions({ collection, req, where: {} })),
-  )
+  for (const collection of collections) {
+    if (payload.collections[collection].config.versions) {
+      await payload.db.deleteVersions({ collection, req, where: {} })
+    }
+  }
 
   payload.logger.info(`— Seeding demo author and user...`)
 
@@ -116,101 +111,40 @@ export const seed = async ({
 
   payload.logger.info(`— Seeding authors...`)
 
-  const [author1, author2] = await Promise.all([
-    payload.create({
-      collection: 'authors',
-      data: {
-        name: 'Juan Dela Cruz',
-        role: 'Editor-in-Chief',
-        bio: 'Juan oversees the editorial direction of the publication.',
-        avatar: imageDoc.id,
-        socialLinks: {
-          website: 'https://example.com',
-          facebook: 'https://facebook.com/juan',
-          linkedin: 'https://linkedin.com/in/juan',
+  const authors = await Promise.all(
+    [
+      { name: 'Juan Dela Cruz', role: 'Editor-in-Chief' },
+      { name: 'Maria Santos', role: 'Staff Writer' },
+      { name: 'Ana Reyes', role: 'Staff Writer' },
+      { name: 'Mark Villanueva', role: 'Contributing Writer' },
+      { name: 'Liza Fernandez', role: 'Staff Writer' },
+    ].map(({ name, role }) =>
+      payload.create({
+        collection: 'authors',
+        data: {
+          name,
+          role,
+          avatar: imageDoc.id,
+          slug: name.toLowerCase().replace(/\s+/g, '-'),
         },
-        slug: 'juan-dela-cruz',
-      },
-    }),
-
-    payload.create({
-      collection: 'authors',
-      data: {
-        name: 'Maria Santos',
-        role: 'Staff Writer',
-        bio: 'Maria covers technology and campus news.',
-        avatar: imageDoc.id,
-        socialLinks: {
-          x: 'https://x.com/maria',
-          instagram: 'https://instagram.com/maria',
-        },
-        slug: 'maria-santos',
-      },
-    }),
-  ])
+      }),
+    ),
+  )
 
   payload.logger.info(`— Seeding articles...`)
 
   // Do not create articles with `Promise.all` because we want the articles to be created in order
   // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  const article1Doc = await payload.create({
-    collection: 'articles',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: article1({ heroImage: imageDoc, blockImage: imageDoc, author: author1 }),
-  })
-
-  const article2Doc = await payload.create({
-    collection: 'articles',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: article2({ heroImage: imageDoc, blockImage: imageDoc, author: author2 }),
-  })
-
-  const article3Doc = await payload.create({
-    collection: 'articles',
-    depth: 0,
-    context: {
-      disableRevalidate: true,
-    },
-    data: article3({ heroImage: imageDoc, blockImage: imageDoc, author: author1 }),
-  })
-
-  // update each article with related articles
-  await payload.update({
-    id: article1Doc.id,
-    collection: 'articles',
-    context: {
-      disableRevalidate: true,
-    },
-    data: {
-      relatedArticles: [article2Doc.id, article3Doc.id],
-    },
-  })
-  await payload.update({
-    id: article2Doc.id,
-    collection: 'articles',
-    context: {
-      disableRevalidate: true,
-    },
-    data: {
-      relatedArticles: [article1Doc.id, article3Doc.id],
-    },
-  })
-  await payload.update({
-    id: article3Doc.id,
-    collection: 'articles',
-    context: {
-      disableRevalidate: true,
-    },
-    data: {
-      relatedArticles: [article1Doc.id, article2Doc.id],
-    },
-  })
+  for (const articleData of generateSeedArticles({ heroImage: imageDoc, authors })) {
+    await payload.create({
+      collection: 'articles',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: articleData,
+    })
+  }
 
   payload.logger.info(`— Seeding forms...`)
 
@@ -226,14 +160,6 @@ export const seed = async ({
   payload.logger.info(`— Seeding pages...`)
 
   await Promise.all([
-    payload.create({
-      collection: 'pages',
-      depth: 0,
-      context: {
-        disableRevalidate: true,
-      },
-      data: home({ heroImage: imageDoc, metaImage: imageDoc }),
-    }),
     payload.create({
       collection: 'pages',
       depth: 0,
@@ -277,36 +203,7 @@ export const seed = async ({
         disableRevalidate: true,
       },
       data: {
-        navItems: [
-          {
-            link: {
-              type: 'custom',
-              label: 'News',
-              url: '/news',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Opinion',
-              url: '/opinion',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Features',
-              url: '/features',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Kultura',
-              url: '/kultura',
-            },
-          },
-        ],
+        navItems: [],
       },
     }),
     payload.updateGlobal({
@@ -315,49 +212,46 @@ export const seed = async ({
         disableRevalidate: true,
       },
       data: {
-        navItems: [
+        description:
+          'The official student and community publication of UP Visayas College of Arts and Sciences.',
+        socialLinks: {
+          facebook: 'https://facebook.com/pagbutlakupv',
+          x: 'https://x.com/pagbutlakupv',
+          instagram: 'https://instagram.com/pagbutlakupv',
+          youtube: 'https://youtube.com/@pagbutlakupv',
+        },
+        navGroups: [
           {
-            link: {
-              type: 'custom',
-              label: 'About',
-              url: '/about',
-            },
+            title: 'Sections',
+            navItems: [
+              { link: { type: 'custom', label: 'News', url: '/news' } },
+              { link: { type: 'custom', label: 'Opinion', url: '/opinion' } },
+              { link: { type: 'custom', label: 'Features', url: '/features' } },
+              { link: { type: 'custom', label: 'Kultura', url: '/kultura' } },
+            ],
           },
           {
-            link: {
-              type: 'custom',
-              label: 'Contact',
-              url: '/contact',
-            },
+            title: 'Company',
+            navItems: [
+              { link: { type: 'custom', label: 'About', url: '/about' } },
+              { link: { type: 'custom', label: 'Contact', url: '/contact' } },
+              { link: { type: 'custom', label: 'Admin', url: '/admin' } },
+              {
+                link: {
+                  type: 'custom',
+                  label: 'Source Code',
+                  newTab: true,
+                  url: 'https://github.com/pagbutlakupv/website',
+                },
+              },
+            ],
           },
           {
-            link: {
-              type: 'custom',
-              label: 'Terms of Use',
-              url: '/terms',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Privacy Policy',
-              url: '/privacy',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Admin',
-              url: '/admin',
-            },
-          },
-          {
-            link: {
-              type: 'custom',
-              label: 'Source Code',
-              newTab: true,
-              url: 'https://github.com/pagbutlakupv/website',
-            },
+            title: 'Legal',
+            navItems: [
+              { link: { type: 'custom', label: 'Terms of Use', url: '/terms' } },
+              { link: { type: 'custom', label: 'Privacy Policy', url: '/privacy' } },
+            ],
           },
         ],
       },
