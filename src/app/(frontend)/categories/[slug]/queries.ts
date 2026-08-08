@@ -18,9 +18,7 @@ export const queryCategoryBySlug = cache(async ({ slug }: { slug: string }) => {
   return result.docs?.[0] || null
 })
 
-// A category's articles are those tagged with the category itself or one of its direct
-// children (not deeper descendants), sorted naturally by publish date.
-export const queryCategoryAndChildIds = cache(async ({ categoryId }: { categoryId: number }) => {
+export const queryCategoryChildren = cache(async ({ categoryId }: { categoryId: number }) => {
   const payload = await getPayload({ config: configPromise })
 
   const children = await payload.find({
@@ -29,7 +27,20 @@ export const queryCategoryAndChildIds = cache(async ({ categoryId }: { categoryI
     limit: 100,
     overrideAccess: false,
     pagination: false,
+    sort: 'title',
+    select: {
+      title: true,
+      slug: true,
+    },
   })
 
-  return [categoryId, ...children.docs.map((child) => child.id)]
+  return children.docs
+})
+
+// A category's articles are those tagged with the category itself or one of its direct
+// children (not deeper descendants), sorted naturally by publish date.
+export const queryCategoryAndChildIds = cache(async ({ categoryId }: { categoryId: number }) => {
+  const children = await queryCategoryChildren({ categoryId })
+
+  return [categoryId, ...children.map((child) => child.id)]
 })

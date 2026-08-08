@@ -1,5 +1,6 @@
 import type { Metadata } from 'next/types'
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import React from 'react'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
@@ -8,7 +9,7 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-import { queryCategoryAndChildIds, queryCategoryBySlug } from './queries'
+import { queryCategoryBySlug, queryCategoryChildren } from './queries'
 
 export const revalidate = 600
 
@@ -27,7 +28,8 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (!category) notFound()
 
   const payload = await getPayload({ config: configPromise })
-  const categoryIds = await queryCategoryAndChildIds({ categoryId: category.id })
+  const children = await queryCategoryChildren({ categoryId: category.id })
+  const categoryIds = [category.id, ...children.map((child) => child.id)]
 
   const articles = await payload.find({
     collection: 'articles',
@@ -56,6 +58,21 @@ export default async function Page({ params: paramsPromise }: Args) {
         <div className="prose dark:prose-invert max-w-none">
           <h1>{category.title}</h1>
         </div>
+
+        {children.length > 0 && (
+          <ul className="mt-4 flex flex-wrap gap-2 list-none p-0">
+            {children.map((child) => (
+              <li key={child.id}>
+                <Link
+                  href={`/categories/${child.slug}`}
+                  className="rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  {child.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="container mb-8">
