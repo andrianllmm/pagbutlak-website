@@ -2,7 +2,7 @@ import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
-import { Card, type CardDoc } from '@/components/Articles/Card'
+import { ArticleCard, type CardDoc } from '@/components/Articles/ArticleCard'
 import { Button } from '@/components/ui/button'
 
 type Props = {
@@ -37,7 +37,7 @@ export const HomeSectionRow: React.FC<Props> = ({
 
       <div className={cn('grid grid-cols-1 gap-4', columnsClassName)}>
         {articles.map((article, index) => (
-          <Card key={index} className="h-full" doc={article} relationTo="articles" />
+          <ArticleCard key={index} className="h-full" doc={article} relationTo="articles" />
         ))}
       </div>
     </div>

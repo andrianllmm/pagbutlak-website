@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { AuthorCard } from '@/components/Authors/Card'
+import { AuthorCard } from '@/components/Authors/AuthorCard'
 import { Button } from '@/components/ui/button'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'

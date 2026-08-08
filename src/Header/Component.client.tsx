@@ -8,7 +8,7 @@ import React, { useEffect, useState } from 'react'
 import type { Header } from '@/payload-types'
 
 import { HeaderDate } from '@/components/HeaderDate'
-import { Wordmark } from '@/components/brand/Wordmark'
+import { Wordmark } from '@/components/Brand/Wordmark'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
