@@ -8,9 +8,11 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-import { queryCategoryBySlug } from '../../page'
+import { queryCategoryAndChildIds, queryCategoryBySlug } from '../../queries'
 
 export const revalidate = 600
+
+const ARTICLE_LIMIT = 12
 
 type Args = {
   params: Promise<{
@@ -30,15 +32,17 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (!category) notFound()
 
   const payload = await getPayload({ config: configPromise })
+  const categoryIds = await queryCategoryAndChildIds({ categoryId: category.id })
 
   const articles = await payload.find({
     collection: 'articles',
     depth: 1,
-    limit: 12,
+    limit: ARTICLE_LIMIT,
     page: sanitizedPageNumber,
     overrideAccess: false,
+    sort: '-publishedAt',
     where: {
-      categories: { in: [category.id] },
+      categories: { in: categoryIds },
       _status: { equals: 'published' },
     },
     select: {
@@ -64,7 +68,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PageRange
           collection="articles"
           currentPage={articles.page}
-          limit={12}
+          limit={ARTICLE_LIMIT}
           totalDocs={articles.totalDocs}
         />
       </div>
@@ -102,16 +106,18 @@ export async function generateStaticParams() {
   for (const { id, slug } of categories.docs) {
     if (!slug) continue
 
+    const categoryIds = await queryCategoryAndChildIds({ categoryId: id })
+
     const { totalDocs } = await payload.count({
       collection: 'articles',
       overrideAccess: false,
       where: {
-        categories: { in: [id] },
+        categories: { in: categoryIds },
         _status: { equals: 'published' },
       },
     })
 
-    const totalPages = Math.ceil(totalDocs / 12)
+    const totalPages = Math.ceil(totalDocs / ARTICLE_LIMIT)
 
     for (let i = 1; i <= totalPages; i++) {
       params.push({ slug, pageNumber: String(i) })

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next/types'
 import { notFound } from 'next/navigation'
-import React, { cache } from 'react'
+import React from 'react'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
@@ -8,7 +8,11 @@ import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
+import { queryCategoryAndChildIds, queryCategoryBySlug } from './queries'
+
 export const revalidate = 600
+
+const ARTICLE_LIMIT = 12
 
 type Args = {
   params: Promise<{
@@ -23,14 +27,16 @@ export default async function Page({ params: paramsPromise }: Args) {
   if (!category) notFound()
 
   const payload = await getPayload({ config: configPromise })
+  const categoryIds = await queryCategoryAndChildIds({ categoryId: category.id })
 
   const articles = await payload.find({
     collection: 'articles',
     depth: 1,
-    limit: 12,
+    limit: ARTICLE_LIMIT,
     overrideAccess: false,
+    sort: '-publishedAt',
     where: {
-      categories: { in: [category.id] },
+      categories: { in: categoryIds },
       _status: { equals: 'published' },
     },
     select: {
@@ -56,7 +62,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PageRange
           collection="articles"
           currentPage={articles.page}
-          limit={12}
+          limit={ARTICLE_LIMIT}
           totalDocs={articles.totalDocs}
         />
       </div>
@@ -100,19 +106,3 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     title: category ? `${category.title} | Pagbutlak` : 'Pagbutlak Categories',
   }
 }
-
-export const queryCategoryBySlug = cache(async ({ slug }: { slug: string }) => {
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'categories',
-    limit: 1,
-    overrideAccess: false,
-    pagination: false,
-    where: {
-      slug: { equals: slug },
-    },
-  })
-
-  return result.docs?.[0] || null
-})
