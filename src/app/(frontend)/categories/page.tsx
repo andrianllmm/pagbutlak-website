@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 import React from 'react'
 
 import configPromise from '@payload-config'
@@ -9,7 +10,7 @@ import type { Category } from '@/payload-types'
 export const dynamic = 'force-static'
 export const revalidate = 600
 
-type CategoryNode = Pick<Category, 'id' | 'title' | 'parent'>
+type CategoryNode = Pick<Category, 'id' | 'title' | 'slug' | 'parent'>
 
 const getParentId = (category: CategoryNode) =>
   typeof category.parent === 'object' ? category.parent?.id : category.parent
@@ -24,7 +25,12 @@ const CategoryList: React.FC<{
 
       return (
         <li key={category.id}>
-          <span className="text-sm text-muted-foreground">{category.title}</span>
+          <Link
+            href={`/categories/${category.slug}`}
+            className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          >
+            {category.title}
+          </Link>
           {children.length > 0 && (
             <CategoryList categories={children} childrenByParentId={childrenByParentId} />
           )}
@@ -73,7 +79,11 @@ export default async function Page() {
             return (
               <div key={category.id} className="rounded-lg bg-card p-4">
                 <div className="prose dark:prose-invert">
-                  <h3>{category.title}</h3>
+                  <h3>
+                    <Link href={`/categories/${category.slug}`} className="no-underline">
+                      {category.title}
+                    </Link>
+                  </h3>
                 </div>
 
                 {children.length > 0 && (
