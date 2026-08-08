@@ -26,7 +26,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { slug = '', pageNumber } = await paramsPromise
   const sanitizedPageNumber = Number(pageNumber)
 
-  if (!Number.isInteger(sanitizedPageNumber)) notFound()
+  if (!Number.isInteger(sanitizedPageNumber) || sanitizedPageNumber < 1) notFound()
 
   const category = await queryCategoryBySlug({ slug })
 
