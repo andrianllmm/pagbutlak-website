@@ -3,7 +3,7 @@ import type { Article } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
-import { Badge } from '@/components/ui/badge'
+import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { formatReadingTime } from '@/utilities/readingTime'
 import { SocialMediaShare } from '@/components/SocialMediaShare'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -26,13 +26,10 @@ export const ArticleHero: React.FC<{
       {/* Categories */}
       {categories && categories.length > 0 && (
         <div className="flex flex-wrap gap-2">
-          {categories.map((category, index) => {
-            if (typeof category === 'object' && category !== null) {
-              const { title: categoryTitle } = category
-              const titleToUse = categoryTitle || 'Untitled category'
-              return <Badge key={index}>{titleToUse}</Badge>
-            }
-            return null
+          {categories.map((category) => {
+            if (typeof category !== 'object' || category === null) return null
+
+            return <CategoryBadge key={category.id} category={category} />
           })}
         </div>
       )}

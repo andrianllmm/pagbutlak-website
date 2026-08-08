@@ -1,8 +1,8 @@
 import type { Metadata } from 'next/types'
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import React from 'react'
 
+import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
@@ -69,12 +69,7 @@ export default async function Page({ params: paramsPromise }: Args) {
           <ul className="mt-4 flex flex-wrap gap-2 list-none p-0">
             {children.map((child) => (
               <li key={child.id}>
-                <Link
-                  href={`/categories/${child.slug}`}
-                  className="rounded-full bg-muted px-3 py-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-                >
-                  {child.title}
-                </Link>
+                <CategoryBadge category={child} />
               </li>
             ))}
           </ul>
