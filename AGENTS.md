@@ -4,7 +4,7 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 ## Project Overview
 
-Pagbutlak Website is a news publishing platform for UPV Pagbutlak, the official student and community publication of the University of the Philippines Visayas (College of Arts and Sciences).
+Pagbutlak Website is a news publishing platform for UPV Pagbutlak, the official student and community publication of the University of the Philippines Visayas (UPV) - College of Arts and Sciences (CAS).
 
 Content sections: News, Features, Opinion, Kultura.
 
@@ -57,7 +57,7 @@ This starts two containers: `payload` (Node.js 22 Alpine) and `postgres` (Postgr
 
 For non-Docker setup, ensure `DATABASE_URI` points to a local Postgres instance (e.g., `localhost:5432`).
 
-## Build Commands
+## Commands
 
 | Command                              | Purpose                           |
 | ------------------------------------ | --------------------------------- |
@@ -66,6 +66,7 @@ For non-Docker setup, ensure `DATABASE_URI` points to a local Postgres instance 
 | `pnpm lint`                          | Run ESLint                        |
 | `pnpm test:int`                      | Integration tests (Vitest)        |
 | `pnpm test:e2e`                      | E2E tests (Playwright)            |
+| `pnpm test`                          | Run all tests                     |
 | `pnpm payload migrate`               | Run pending migrations            |
 | `pnpm payload migrate:create <name>` | Create a new migration            |
 | `pnpm payload migrate:status`        | Check migration status            |
@@ -130,18 +131,13 @@ After adding new components used in the Payload admin panel (custom fields, cust
 pnpm generate:importmap
 ```
 
-### Seeding - CLI vs Admin UI
+### Seeding
 
-`seed()` in `src/endpoints/seed/index.ts` is the single source of truth for seed data, used by two entry points:
-
-- Admin UI: the "Seed your database" button (`src/components/BeforeDashboard/SeedButton`) calls `POST /next/seed` (`src/app/(frontend)/next/seed/route.ts`), which requires an authenticated session.
-- CLI: `pnpm seed` runs `src/scripts/seed.ts` via `payload run`, using the Local API directly (no running app server or session needed). Requires at least one existing user in the `users` collection to act as. This is the only way to seed a database that isn't reachable through a browser (e.g. prod via `DATABASE_URI`).
-
-Seeding is destructive — it clears the seeded collections (`src/endpoints/seed/index.ts:11-20`) before repopulating them. Never run it against a database with content you want to keep.
-
-Any new `payload.create`/`update`/`updateGlobal` call added to `seed()` must pass `context: { disableRevalidate: true }`. Without it, Next.js hooks call `revalidatePath`/`revalidateTag` outside of a request context, which throws when seeding is run standalone (CLI, or via `yarn seed`-style scripts without an active server).
-
-If the target database has `s3Storage` enabled (S3 env vars set) but the environment running the seed script does not, uploaded media rows will be created but the actual files will be written to local disk instead of the S3 bucket — the media won't render on any environment that expects S3. Export the `S3_*` vars for that command when seeding an S3-backed database, e.g. `S3_BUCKET=... S3_ACCESS_KEY_ID=... pnpm seed` (see `useS3` in `src/plugins/index.ts`).
+- `seed()` in `src/endpoints/seed/index.ts` is the single source of truth for seed data. Both the Admin UI and `pnpm seed` use it.
+- Seeding is destructive: it clears seeded collections before repopulating them. Never run it against a database containing content that must be preserved.
+- The CLI (`pnpm seed`) uses the Local API directly and requires an existing user in the `users` collection.
+- Any `payload.create`, `update`, or `updateGlobal` call added to `seed()` must pass `context: { disableRevalidate: true }` to prevent Next.js revalidation hooks from running outside a request context.
+- When seeding an S3-backed database, ensure the `S3_*` environment variables are available to the environment running the seed command; otherwise media files may be written to local disk instead of S3.## Code Conventions
 
 ## Code Conventions
 
@@ -152,18 +148,38 @@ If the target database has `s3Storage` enabled (S3 env vars set) but the environ
 
 ### Git
 
-- Conventional commits (enforced by commitlint): `type(scope): concise description`
+- Use Conventional Commits (enforced by commitlint): `type(scope): concise description`.
+- Keep commits atomic: each commit should represent one logical, self-contained change.
+- Keep commit messages concise. Add a description only when necessary.
+- Do not co-author commits or include yourself in commit messages.
+- Do not use `--no-verify` or otherwise bypass Git hooks.
+- Do not bypass GPG signing. If a commit cannot be signed because GPG is locked or requires user interaction, stop and ask the user to unlock GPG before continuing.
+- Do not amend, rebase, reset, or otherwise rewrite existing commits unless explicitly requested.
+- Before committing, inspect the diff and ensure it contains only intended changes.
 
-### Best Practices
+#### Branches
 
-- **Object parameters for function arguments**
-- **Prefer types over interfaces** (except when extending external types)
-- **Prefer functions over classes** (classes only for errors/adapters)
-- **Prefer pure functions** - when mutation is unavoidable, return the mutated object instead of void
-- **Organize functions top-down** - exports before helpers
-- **Use `import type` for types**, regular `import` for values, separate statements even from the same module
-- **Prefix booleans** with `is`/`has`/`can`/`should` (e.g. `isValid`, `hasData`, `canEdit`) for clarity
-- **Prefer self-describing names** over generic names with comments to explain their purpose
+- Use descriptive branch names with the format `type/<short-description>` (e.g., `feat/add-search`, `fix/article-slug`); prefer `feat/` over `feature/`.
+- Do not include issue number in branch names.
+- Keep branches focused on a single issue or logical change.
+- Create a dedicated branch for each change. Do not make changes directly on the default branch.
+
+#### Issues
+
+- Follow the GitHub issue template.
+- Add relevant GitHub labels; do not add labels speculatively.
+- Assign the issue to the current user.
+- Create an issue before opening a PR when the change is substantial enough to warrant dedicated tracking. For one-off changes, quick fixes, or simple patches that do not benefit from a dedicated issue, a PR may be created directly unless the user explicitly requests an issue.
+
+#### Pull Requests
+
+- Follow the GitHub PR template.
+- Add relevant GitHub labels; do not add labels speculatively.
+- Assign the PR to the current user.
+- Link the PR to its corresponding issue using `Closes #<issue-number>` when the PR fully resolves the issue.
+- If a corresponding issue exists but the PR does not fully resolve it, link the issue without using a closing keyword.
+- Keep PRs focused and reasonably sized.
+- Do not mark a PR ready for review while required checks are failing or known issues remain.
 
 ### File Organization
 
@@ -187,6 +203,27 @@ ComponentName/
 - **Do:** Create a folder per component with `index.tsx` and optional `index.scss`
 - **Don't:** Place multiple `ComponentName.tsx` files in a single folder with one shared `.scss` file
 - Re-export from barrel files (`index.ts`) when grouping related components in a parent directory
+
+## Best Practices
+
+- **Object parameters for function arguments**
+- **Prefer types over interfaces** (except when extending external types)
+- **Prefer functions over classes** (classes only for errors/adapters)
+- **Prefer pure functions** - when mutation is unavoidable, return the mutated object instead of void
+- **Organize functions top-down** - exports before helpers
+- **Use `import type` for types**, regular `import` for values, separate statements even from the same module
+- **Prefix booleans** with `is`/`has`/`can`/`should` (e.g. `isValid`, `hasData`, `canEdit`) for clarity
+- **Prefer self-describing names** over generic names with comments to explain their purpose
+
+## Verification
+
+- Verify every code change before considering the task complete.
+- Run the checks relevant to the files and behavior changed.
+- At minimum, run `pnpm lint` for code changes.
+- Run `pnpm test:int` when changing backend, Payload, database, access control, hooks, or other integration behavior.
+- Run `pnpm test:e2e` when changing frontend behavior, routes, navigation, forms, or other end-to-end flows.
+- Run `pnpm build` for changes that may affect the production build, configuration, dependencies, or deployment.
+- Use Playwright/browser automation ONLY WHEN NEEDED for browser behavior, end-to-end verification, or visual inspection of UI changes. Prefer static inspection and existing tests when sufficient; avoid unnecessary browser interactions and screenshots.
 
 ## Skills & Docs Reference
 
