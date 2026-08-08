@@ -156,6 +156,7 @@ pnpm generate:importmap
 - Do not bypass GPG signing. If a commit cannot be signed because GPG is locked or requires user interaction, stop and ask the user to unlock GPG before continuing.
 - Do not amend, rebase, reset, or otherwise rewrite existing commits unless explicitly requested.
 - Before committing, inspect the diff and ensure it contains only intended changes.
+- When updating a branch with changes from its base branch, prefer rebasing over merging.
 
 #### Branches
 
@@ -168,7 +169,9 @@ pnpm generate:importmap
 
 - Follow the GitHub issue template.
 - Add relevant GitHub labels; do not add labels speculatively.
+- Add relevant issue type.
 - Assign the issue to the current user.
+- Link issue to GitHub project "pagbutlak website".
 - Create an issue before opening a PR when the change is substantial enough to warrant dedicated tracking. For one-off changes, quick fixes, or simple patches that do not benefit from a dedicated issue, a PR may be created directly unless the user explicitly requests an issue.
 
 #### Pull Requests
