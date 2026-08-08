@@ -222,7 +222,13 @@ ComponentName/
 - At minimum, run `pnpm lint` for code changes.
 - Run `pnpm test:int` when changing backend, Payload, database, access control, hooks, or other integration behavior.
 - Run `pnpm test:e2e` when changing frontend behavior, routes, navigation, forms, or other end-to-end flows.
-- Run `pnpm build` for changes that may affect the production build, configuration, dependencies, or deployment.
+- Run `pnpm build` only for changes that may affect the production build, configuration, dependencies, or deployment.
+- Never run `pnpm build` against a directory/container where `pnpm dev` is already running. Both write to the same `.next` output directory by default; a concurrent build corrupts the dev server's webpack cache and manifests. Instead, isolate the verification build with `BUILD_DIR`:
+  ```bash
+  docker compose exec -e BUILD_DIR=.next-verify payload pnpm build
+  docker compose exec payload rm -rf .next-verify
+  ```
+  Note: Next's dev-typegen may rewrite the shared `tsconfig.json` to reference `<BUILD_DIR>/types/**/*.ts` as a side effect. Discard that change rather than committing it.
 - Use Playwright/browser automation ONLY WHEN NEEDED for browser behavior, end-to-end verification, or visual inspection of UI changes. Prefer static inspection and existing tests when sufficient; avoid unnecessary browser interactions and screenshots.
 
 ## Skills & Docs Reference
