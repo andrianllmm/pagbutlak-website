@@ -6,12 +6,12 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import { ARTICLE_SECTIONS } from '@/constants/articleSections'
-import { CompactCard } from '@/components/Articles/CompactCard'
-import { FeaturedCard } from '@/components/Articles/FeaturedCard'
+import { ArticleCompactCard } from '@/components/Articles/ArticleCompactCard'
+import { ArticleFeaturedCard } from '@/components/Articles/ArticleFeaturedCard'
 import { HomeMasthead } from '@/components/HomeMasthead'
 import { HomeSectionRow } from '@/components/HomeSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
-import type { CardDoc } from '@/components/Articles/Card'
+import type { CardDoc } from '@/components/Articles/ArticleCard'
 
 const ARTICLE_SELECT = {
   title: true,
@@ -78,7 +78,7 @@ export default async function Page() {
       <SectionsNav />
 
       <div className="container pt-8">
-        {featured && <FeaturedCard doc={featured} relationTo="articles" />}
+        {featured && <ArticleFeaturedCard doc={featured} relationTo="articles" />}
       </div>
 
       <div className="container mt-8">
@@ -105,7 +105,7 @@ export default async function Page() {
           </div>
           <div className="flex flex-col gap-2">
             {sidebarResult.docs.map((article, index) => (
-              <CompactCard key={index} doc={article} relationTo="articles" />
+              <ArticleCompactCard key={index} doc={article} relationTo="articles" />
             ))}
           </div>
         </div>

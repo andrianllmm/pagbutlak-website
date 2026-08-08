@@ -8,9 +8,9 @@ import { Media } from '@/components/Media'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { formatReadingTime } from '@/utilities/readingTime'
-import type { CardDoc } from '../Card'
+import type { CardDoc } from '../ArticleCard'
 
-export const FeaturedCard: React.FC<{
+export const ArticleFeaturedCard: React.FC<{
   className?: string
   doc?: CardDoc
   relationTo?: 'articles'

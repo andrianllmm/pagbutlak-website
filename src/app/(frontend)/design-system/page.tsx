@@ -1,8 +1,8 @@
 import { notFound } from 'next/navigation'
-import { Logo } from '@/components/brand/Logo'
-import { Wordmark } from '@/components/brand/Wordmark'
+import { Logo } from '@/components/Brand/Logo'
+import { Wordmark } from '@/components/Brand/Wordmark'
 import { Button } from '@/components/ui/button'
-import { Card } from '@/components/Articles/Card'
+import { ArticleCard } from '@/components/Articles/ArticleCard'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -109,7 +109,7 @@ export default function Page() {
       <section className="mb-12">
         <h2 className="text-xl font-bold mb-4">Cards</h2>
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <Card
+          <ArticleCard
             doc={{
               slug: 'card-1',
               title: 'Card 1',
@@ -119,7 +119,7 @@ export default function Page() {
             relationTo="articles"
           />
 
-          <Card
+          <ArticleCard
             doc={{
               slug: 'card-2',
               title: 'Card 2',
@@ -129,7 +129,7 @@ export default function Page() {
             relationTo="articles"
           />
 
-          <Card
+          <ArticleCard
             doc={{
               slug: 'card-3',
               title: 'Card 3',

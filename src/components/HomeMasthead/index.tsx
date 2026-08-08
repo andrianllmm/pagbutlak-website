@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { Wordmark } from '@/components/brand/Wordmark'
+import { Wordmark } from '@/components/Brand/Wordmark'
 
 export const HomeMasthead: React.FC = () => {
   return (

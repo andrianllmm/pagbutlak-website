@@ -7,7 +7,7 @@ import type { Footer } from '@/payload-types'
 
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CMSLink } from '@/components/Link'
-import { Wordmark } from '@/components/brand/Wordmark'
+import { Wordmark } from '@/components/Brand/Wordmark'
 
 export async function Footer() {
   const footerData: Footer = await getCachedGlobal('footer', 1)()

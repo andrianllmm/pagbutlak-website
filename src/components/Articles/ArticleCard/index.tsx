@@ -58,7 +58,7 @@ const normalizeCategories = (
   return normalizedCategories
 }
 
-export const Card: React.FC<{
+export const ArticleCard: React.FC<{
   alignItems?: 'center'
   className?: string
   doc?: CardDoc

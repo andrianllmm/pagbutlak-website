@@ -6,9 +6,9 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
-import type { CardDoc } from '../Card'
+import type { CardDoc } from '../ArticleCard'
 
-export const CompactCard: React.FC<{
+export const ArticleCompactCard: React.FC<{
   className?: string
   doc?: CardDoc
   relationTo?: 'articles'

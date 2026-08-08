@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-import { AuthorCard } from '@/components/Authors/Card'
+import { AuthorCard } from '@/components/Authors/AuthorCard'
 
 export const dynamic = 'force-static'
 export const revalidate = 600

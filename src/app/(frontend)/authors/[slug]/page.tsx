@@ -11,7 +11,7 @@ import { Globe, LinkIcon } from 'lucide-react'
 import { SiFacebook, SiInstagram, SiX } from '@icons-pack/react-simple-icons'
 
 import { Avatar } from '@/components/Avatar'
-import { Card } from '@/components/Articles/Card'
+import { ArticleCard } from '@/components/Articles/ArticleCard'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -144,7 +144,7 @@ export default async function AuthorPage({ params: paramsPromise }: Args) {
               {articles.docs.map((article) => {
                 if (typeof article === 'string') return null
 
-                return <Card key={article.id} doc={article} relationTo="articles" />
+                return <ArticleCard key={article.id} doc={article} relationTo="articles" />
               })}
             </div>
           </div>
