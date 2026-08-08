@@ -31,6 +31,8 @@ const nextConfig = {
   },
   reactStrictMode: true,
   output: 'standalone',
+  // Allows a one-off `pnpm build` to write to a separate output directory (e.g. `BUILD_DIR=.next-verify`)
+  distDir: process.env.BUILD_DIR || '.next',
   redirects,
 }
 
