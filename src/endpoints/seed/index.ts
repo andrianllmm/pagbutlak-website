@@ -23,7 +23,52 @@ const collections: CollectionSlug[] = [
 
 const globals: GlobalSlug[] = ['header', 'footer']
 
-const categories = ['Technology', 'News', 'Finance', 'Design', 'Software', 'Engineering']
+const categories: { title: string; children?: string[] }[] = [
+  {
+    title: 'UPV',
+    children: [
+      'UPV Administration',
+      'UPV Student Government',
+      'Student Affairs',
+      'Academics',
+      'Research',
+      'Campus Development',
+    ],
+  },
+  {
+    title: 'UP System',
+    children: [
+      'UP System Student Government',
+      'Student Regent',
+      'Student Councils',
+      'General Assembly of Student Councils',
+    ],
+  },
+  {
+    title: 'Education',
+    children: ['Higher Education', 'Academic Policies', 'Student Welfare'],
+  },
+  {
+    title: 'Politics & Governance',
+    children: ['Elections', 'National Politics', 'Local Politics', 'Student Politics'],
+  },
+  {
+    title: 'Society',
+    children: ['Human Rights', 'Labor', 'Social Movements', 'Gender'],
+  },
+  {
+    title: 'Environment',
+    children: ['Climate Change', 'Sustainability', 'Disaster & Resilience'],
+  },
+  {
+    title: 'Transportation',
+    children: ['Public Transportation', 'Campus Transportation'],
+  },
+  {
+    title: 'Culture',
+    children: ['Arts', 'Literature', 'Music', 'Heritage'],
+  },
+]
 
 // Next.js revalidation errors are normal when seeding the database without a server running
 // i.e. running `yarn seed` locally instead of using the admin UI within an active app
@@ -98,16 +143,32 @@ export const seed = async ({
       data: image1,
       file: image,
     }),
-    categories.map((category) =>
-      payload.create({
-        collection: 'categories',
-        data: {
-          title: category,
-          slug: category,
-        },
-      }),
-    ),
   ])
+
+  for (const { title, children } of categories) {
+    const parent = await payload.create({
+      collection: 'categories',
+      data: {
+        title,
+        slug: title,
+      },
+    })
+
+    if (children) {
+      await Promise.all(
+        children.map((child) =>
+          payload.create({
+            collection: 'categories',
+            data: {
+              title: child,
+              slug: child,
+              parent: parent.id,
+            },
+          }),
+        ),
+      )
+    }
+  }
 
   payload.logger.info(`— Seeding authors...`)
 
