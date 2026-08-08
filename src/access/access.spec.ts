@@ -12,7 +12,7 @@ const withUser = (user: User | null) => ({ req: { user } }) as unknown as Access
 
 describe('anyone', () => {
   it('always allows access', () => {
-    expect(anyone(withUser(null))).toBe(true)
+    expect(anyone()).toBe(true)
   })
 })
 
