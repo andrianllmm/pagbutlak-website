@@ -1,4 +1,5 @@
 import type { CollectionSlug, GlobalSlug, Payload, PayloadRequest, File } from 'payload'
+import type { Category } from '@/payload-types'
 
 import { about } from './about'
 import { contact } from './contact'
@@ -145,6 +146,8 @@ export const seed = async ({
     }),
   ])
 
+  const categoryDocs: Category[] = []
+
   for (const { title, children } of categories) {
     const parent = await payload.create({
       collection: 'categories',
@@ -155,17 +158,19 @@ export const seed = async ({
     })
 
     if (children) {
-      await Promise.all(
-        children.map((child) =>
-          payload.create({
-            collection: 'categories',
-            data: {
-              title: child,
-              slug: child,
-              parent: parent.id,
-            },
-          }),
-        ),
+      categoryDocs.push(
+        ...(await Promise.all(
+          children.map((child) =>
+            payload.create({
+              collection: 'categories',
+              data: {
+                title: child,
+                slug: child,
+                parent: parent.id,
+              },
+            }),
+          ),
+        )),
       )
     }
   }
@@ -196,7 +201,11 @@ export const seed = async ({
 
   // Do not create articles with `Promise.all` because we want the articles to be created in order
   // This way we can sort them by `createdAt` or `publishedAt` and they will be in the expected order
-  for (const articleData of generateSeedArticles({ heroImage: imageDoc, authors })) {
+  for (const articleData of generateSeedArticles({
+    heroImage: imageDoc,
+    authors,
+    categories: categoryDocs,
+  })) {
     await payload.create({
       collection: 'articles',
       depth: 0,
