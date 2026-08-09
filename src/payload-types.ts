@@ -229,7 +229,7 @@ export interface Page {
 export interface Article {
   id: number;
   title: string;
-  section: 'news' | 'opinion' | 'feature' | 'kultura';
+  section: 'news' | 'opinion' | 'feature' | 'kultura' | 'sports' | 'multimedia' | 'issues';
   heroImage?: (number | null) | Media;
   content: {
     root: {
@@ -862,6 +862,7 @@ export interface Search {
     relationTo: 'articles';
     value: number | Article;
   };
+  section?: ('news' | 'opinion' | 'feature' | 'kultura' | 'sports' | 'multimedia' | 'issues') | null;
   slug?: string | null;
   authors?: (number | Author)[] | null;
   publishedAt?: string | null;
@@ -1580,6 +1581,7 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
+  section?: T;
   slug?: T;
   authors?: T;
   publishedAt?: T;
