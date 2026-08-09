@@ -54,14 +54,19 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     conditions.push({ authors: { equals: author } })
   }
 
-  if (from) {
-    conditions.push({ publishedAt: { greater_than_equal: new Date(from).toISOString() } })
+  if (from) {   
+    const fromDate = new Date(from)   
+    //Guardrail for non NaN inputs
+    if (!Number.isNaN(fromDate.getTime())) {
+      conditions.push({ publishedAt: { greater_than_equal: fromDate.toISOString() } })
+    }
   }
 
   if (to) {
-    conditions.push({
-      publishedAt: { less_than_equal: new Date(`${to}T23:59:59`).toISOString() },
-    })
+    const toDate = new Date(`${to}T23:59:59`)
+    if (!Number.isNaN(toDate.getTime())) {
+      conditions.push({ publishedAt: { less_than_equal: toDate.toISOString() } })
+    }
   }
 
   if (readingTime === 'under5') {
