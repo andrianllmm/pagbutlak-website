@@ -229,7 +229,7 @@ export interface Page {
 export interface Article {
   id: number;
   title: string;
-  section: 'news' | 'opinion' | 'feature' | 'kultura' | 'sports' | 'multimedia' | 'issues';
+  section: 'news' | 'opinion' | 'feature' | 'kultura';
   heroImage?: (number | null) | Media;
   content: {
     root: {
@@ -862,7 +862,7 @@ export interface Search {
     relationTo: 'articles';
     value: number | Article;
   };
-  section?: ('news' | 'opinion' | 'feature' | 'kultura' | 'sports' | 'multimedia' | 'issues') | null;
+  section?: ('news' | 'opinion' | 'feature' | 'kultura') | null;
   slug?: string | null;
   authors?: (number | Author)[] | null;
   publishedAt?: string | null;
