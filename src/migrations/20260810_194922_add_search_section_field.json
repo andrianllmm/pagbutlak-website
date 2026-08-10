@@ -9869,10 +9869,7 @@
         "news",
         "opinion",
         "feature",
-        "kultura",
-        "sports",
-        "multimedia",
-        "issues"
+        "kultura"
       ]
     },
     "public.enum_articles_status": {
@@ -9890,10 +9887,7 @@
         "news",
         "opinion",
         "feature",
-        "kultura",
-        "sports",
-        "multimedia",
-        "issues"
+        "kultura"
       ]
     },
     "public.enum__articles_v_version_status": {
@@ -9927,10 +9921,7 @@
         "news",
         "opinion",
         "feature",
-        "kultura",
-        "sports",
-        "multimedia",
-        "issues"
+        "kultura"
       ]
     },
     "public.enum_payload_jobs_log_task_slug": {
@@ -9991,6 +9982,6 @@
     "tables": {},
     "columns": {}
   },
-  "id": "d79be8f3-5eef-4429-b6c8-d9607d361c6c",
+  "id": "271e16a4-a73e-41c0-8db1-073c804f29c8",
   "prevId": "00000000-0000-0000-0000-000000000000"
 }
