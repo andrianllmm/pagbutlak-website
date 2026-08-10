@@ -1,4 +1,4 @@
-import type { Author, Media } from '@/payload-types'
+import type { Author, Category, Media } from '@/payload-types'
 import type { RequiredDataFromCollectionSlug } from 'payload'
 
 import type { ArticleSection } from '@/constants/articleSections'
@@ -75,15 +75,37 @@ const ARTICLE_TITLES: Record<ArticleSection, string[]> = {
   ],
 }
 
+const ARTICLE_CATEGORIES: Record<string, string[]> = {
+  'University Announces New Scholarship Program': ['Academic Policies', 'Student Welfare'],
+  'Student Council Elections Set for Next Month': ['UPV Student Government', 'Student Politics'],
+  'Campus Wifi Upgrade Completed Ahead of Schedule': ['Campus Development'],
+  'Library Extends Hours During Finals Week': ['Academics', 'Student Welfare'],
+  'Why Mental Health Support Should Be a Priority': ['Student Welfare', 'Student Affairs'],
+  'The Case for More Green Spaces on Campus': ['Sustainability', 'Campus Development'],
+  'Rethinking Grading Systems in Higher Education': ['Academic Policies', 'Higher Education'],
+  'Student Voices Matter in University Decisions': ['UPV Student Government', 'Student Politics'],
+  'Meet the Students Behind the Campus Garden Project': ['Sustainability', 'Campus Development'],
+  'A Day in the Life of a Working Student': ['Student Affairs', 'Student Welfare'],
+  'Alumni Spotlight: From Campus to Career': ['Academics', 'Higher Education'],
+  'Exploring Local Food Spots Near Campus': ['Campus Development'],
+  'Traditional Dance Troupe Wins National Competition': ['Arts', 'Heritage'],
+  'Preserving Local Folklore Through Student Films': ['Heritage', 'Arts'],
+  'Campus Celebrates Cultural Diversity Week': ['Arts', 'Heritage'],
+  'Student Artists Showcase Work at Annual Exhibit': ['Arts'],
+}
+
 export const generateSeedArticles = ({
   heroImage,
   authors,
+  categories,
 }: {
   heroImage: Media
   authors: Author[]
+  categories: Category[]
 }): RequiredDataFromCollectionSlug<'articles'>[] => {
   const sections = Object.keys(ARTICLE_TITLES) as ArticleSection[]
   const articlesPerSection = ARTICLE_TITLES[sections[0]].length
+  const categoryIdsByTitle = new Map(categories.map((category) => [category.title, category.id]))
 
   const articles: RequiredDataFromCollectionSlug<'articles'>[] = []
 
@@ -94,6 +116,9 @@ export const generateSeedArticles = ({
       const title = ARTICLE_TITLES[section][round]
       const author = authors[articles.length % authors.length]
       const publishedAt = new Date(Date.now() - articles.length * 13 * 60 * 1000).toISOString()
+      const articleCategories = (ARTICLE_CATEGORIES[title] ?? [])
+        .map((categoryTitle) => categoryIdsByTitle.get(categoryTitle))
+        .filter((id): id is number => id !== undefined)
 
       articles.push({
         slug: slugify(title),
@@ -104,6 +129,7 @@ export const generateSeedArticles = ({
         publishedAt,
         heroImage: heroImage.id,
         content: richText(LOREM),
+        categories: articleCategories,
         meta: {
           title,
           description: LOREM_SHORT,
