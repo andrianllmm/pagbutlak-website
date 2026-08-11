@@ -18,6 +18,10 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
     defaultColumns: ['title', 'platform', 'slug', 'updatedAt'],
     useAsTitle: 'title',
   },
+  labels: {
+    plural: 'Multimedia',
+    singular: 'Multimedia',
+  },
   fields: [
     {
       name: 'title',
