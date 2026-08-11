@@ -1,0 +1,68 @@
+'use client'
+import Script from 'next/script'
+import React, { useEffect, useRef } from 'react'
+
+import { getTikTokVideoId } from '@/utilities/multimediaEmbed'
+import { cn } from '@/utilities/ui'
+import { EmbedFallback } from './EmbedFallback'
+import { EMBED_WIDTH_CLASS, type MultimediaEmbedProps } from './types'
+
+declare global {
+  interface Window {
+    tiktokEmbed?: {
+      lib?: {
+        render: (elements?: HTMLElement[]) => void
+      }
+    }
+  }
+}
+
+export const TikTokEmbed: React.FC<MultimediaEmbedProps> = ({ className, title, url }) => {
+  // TikTok's embed.js selects nodes to process via
+  // `document.getElementsByClassName('tiktok-embed')` filtered to
+  // `tagName === 'blockquote'` (see their collectNodes()), so the ref passed
+  // to lib.render() must point at the blockquote itself, not a wrapper.
+  const blockquoteRef = useRef<HTMLQuoteElement>(null)
+  const videoId = getTikTokVideoId(url)
+
+  // TikTok's embed.js only auto-scans the DOM once, on its own load event.
+  // On client-side navigation between multimedia pages the script is already
+  // loaded (Next dedupes the <Script> by src), so we have to explicitly ask
+  // it to (re-)render this specific blockquote.
+  useEffect(() => {
+    if (videoId && window.tiktokEmbed?.lib?.render && blockquoteRef.current) {
+      window.tiktokEmbed.lib.render([blockquoteRef.current])
+    }
+  }, [videoId])
+
+  if (!videoId) {
+    return <EmbedFallback className={className} />
+  }
+
+  return (
+    <div className={cn('mx-auto', EMBED_WIDTH_CLASS, className)}>
+      <blockquote
+        cite={url}
+        className="tiktok-embed"
+        data-video-id={videoId}
+        ref={blockquoteRef}
+        style={{ maxWidth: '100%', minWidth: 0, width: '100%' }}
+      >
+        <section>
+          <a href={url} rel="noreferrer" target="_blank" title={title}>
+            {title}
+          </a>
+        </section>
+      </blockquote>
+      <Script
+        onLoad={() => {
+          window.tiktokEmbed?.lib?.render(
+            blockquoteRef.current ? [blockquoteRef.current] : undefined,
+          )
+        }}
+        src="https://www.tiktok.com/embed.js"
+        strategy="lazyOnload"
+      />
+    </div>
+  )
+}
