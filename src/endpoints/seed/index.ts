@@ -8,6 +8,7 @@ import { terms } from './terms'
 import { privacy } from './privacy'
 import { image1 } from './image'
 import { generateSeedArticles } from './articles'
+import { generateSeedMultimedia } from './multimedia'
 import path from 'path'
 import fs from 'fs'
 
@@ -17,6 +18,7 @@ const collections: CollectionSlug[] = [
   'pages',
   'articles',
   'authors',
+  'multimedia',
   'forms',
   'form-submissions',
   'search',
@@ -213,6 +215,19 @@ export const seed = async ({
         disableRevalidate: true,
       },
       data: articleData,
+    })
+  }
+
+  payload.logger.info(`— Seeding multimedia...`)
+
+  for (const multimediaData of generateSeedMultimedia()) {
+    await payload.create({
+      collection: 'multimedia',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: multimediaData,
     })
   }
 
