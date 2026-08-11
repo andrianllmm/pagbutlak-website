@@ -16,13 +16,14 @@ type Args = {
     q?: string
     section?: string
     author?: string
+    category?: string
     from?: string
     to?: string
     readingTime?: string
   }>
 }
 export default async function Page({ searchParams: searchParamsPromise }: Args) {
-  const { q: query, section, author, from, to, readingTime } = await searchParamsPromise
+  const { q: query, section, author, category, from, to, readingTime } = await searchParamsPromise
   const payload = await getPayload({ config: configPromise })
 
   const authorOptions = await payload.find({
@@ -31,6 +32,14 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     pagination: false,
     sort: 'name',
     select: { name: true },
+  })
+
+  const categoryOptions = await payload.find({
+    collection: 'categories',
+    limit: 1000,
+    pagination: false,
+    sort: 'title',
+    select: { title: true },
   })
 
   const conditions: Where[] = []
@@ -52,6 +61,13 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
   if (author) {
     conditions.push({ authors: { equals: author } })
+  }
+
+  if (category) {
+    const categoryIds = category.split(',').filter(Boolean)
+    if (categoryIds.length > 0) {
+      conditions.push({ 'categories.categoryID': { in: categoryIds } })
+    }
   }
 
   if (from) {   
@@ -108,6 +124,10 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
               sections={ARTICLE_SECTIONS}
               authors={authorOptions.docs.map((doc) => ({
                 label: doc.name,
+                value: String(doc.id),
+              }))}
+              categories={categoryOptions.docs.map((doc) => ({
+                label: doc.title,
                 value: String(doc.id),
               }))}
             >

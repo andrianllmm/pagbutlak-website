@@ -2,6 +2,7 @@
 
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
+import { MultiSelectCombobox } from '@/components/ui/multiSelectCombobox'
 import { DatePickerWithRange } from '@/components/ui/datePickerRange'
 import { Label } from '@/components/ui/label'
 import { format } from 'date-fns'
@@ -18,6 +19,7 @@ type Option = {
 type SearchFiltersProps = {
   sections: readonly Option[]
   authors: Option[]
+  categories: Option[]
   children: React.ReactNode
 }
 
@@ -31,9 +33,9 @@ const READING_TIME_OPTIONS: Option[] = [
   { label: '10+ min', value: '10plus' },
 ]
 
-const FILTER_PARAM_KEYS = ['section', 'author', 'from', 'to', 'readingTime']
+const FILTER_PARAM_KEYS = ['section', 'author', 'category', 'from', 'to', 'readingTime']
 
-export function SearchFilters({ sections, authors, children }: SearchFiltersProps) {
+export function SearchFilters({ sections, authors, categories, children }: SearchFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
@@ -43,6 +45,7 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
   const from = searchParams.get('from') ?? ''
   const to = searchParams.get('to') ?? ''
   const readingTime = searchParams.get('readingTime') ?? ANY_VALUE
+  const selectedCategories = searchParams.get('category')?.split(',').filter(Boolean) ?? []
 
   const hasActiveFilters = FILTER_PARAM_KEYS.some((key) => searchParams.get(key))
 
@@ -85,6 +88,16 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
     router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`)
   }
 
+  const handleCategoriesChange = (values: string[]) => {
+    const params = new URLSearchParams(searchParams.toString())
+    if (values.length === 0) {
+      params.delete('category')
+    } else {
+      params.set('category', values.join(','))
+    }
+    router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`)
+  }
+
   const resetFilters = () => {
     const params = new URLSearchParams(searchParams.toString())
     FILTER_PARAM_KEYS.forEach((key) => params.delete(key))
@@ -102,8 +115,8 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
       </div>
 
       {isOpen && (
-        <div className="mt-4 grid grid-cols-2 gap-6 text-left md:grid-cols-5">
-          <div className="grid gap-1.5">
+        <div className="mt-4 grid grid-cols-2 gap-6 text-left md:grid-cols-4">
+          <div className="grid gap-1.5 pl-2">
             <Label htmlFor="section-search">Section</Label>
             <Combobox
               id="section-search"
@@ -130,11 +143,21 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
             />
           </div>
 
-          <div className="grid gap-1.5 md:col-span-2">
-            <DatePickerWithRange value={dateRange} onChange={handleDateRangeChange} />
+          <div className="grid gap-1.5">
+            <Label htmlFor="category-search">Category</Label>
+            <MultiSelectCombobox
+              id="category-search"
+              options={categories}
+              values={selectedCategories}
+              onChange={handleCategoriesChange}
+              placeholder="Any"
+              searchPlaceholder="Search categories..."
+              emptyText="No categories found."
+              className="w-full"
+            />
           </div>
 
-          <div className="grid gap-1.5 pl-2">
+          <div className="grid gap-1.5">
             <Label htmlFor="reading-time-search">Reading Time</Label>
             <Combobox
               id="reading-time-search"
@@ -145,6 +168,10 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
               showSearch={false}
               className="w-full"
             />
+          </div>
+
+          <div className="grid gap-1.5 md:col-span-2">
+            <DatePickerWithRange value={dateRange} onChange={handleDateRangeChange} />
           </div>
 
           <Button
