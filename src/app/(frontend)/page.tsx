@@ -10,6 +10,7 @@ import { ArticleCompactCard } from '@/components/Articles/ArticleCompactCard'
 import { ArticleFeaturedCard } from '@/components/Articles/ArticleFeaturedCard'
 import { HomeMasthead } from '@/components/HomeMasthead'
 import { HomeSectionRow } from '@/components/HomeSectionRow'
+import { MultimediaSectionRow } from '@/components/MultimediaSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
 import type { CardDoc } from '@/components/Articles/ArticleCard'
 
@@ -21,6 +22,15 @@ const ARTICLE_SELECT = {
   meta: true,
   publishedAt: true,
   authors: true,
+} as const
+
+const MULTIMEDIA_SELECT = {
+  title: true,
+  slug: true,
+  platform: true,
+  thumbnail: true,
+  autoThumbnailUrl: true,
+  publishedAt: true,
 } as const
 
 export default async function Page() {
@@ -42,7 +52,7 @@ export default async function Page() {
     ? { and: [{ _status: { equals: 'published' } }, { id: { not_equals: featured.id } }] }
     : { _status: { equals: 'published' } }
 
-  const [sidebarResult, ...sectionResults] = await Promise.all([
+  const [sidebarResult, multimediaResult, ...sectionResults] = await Promise.all([
     payload.find({
       collection: 'articles',
       depth: 1,
@@ -51,6 +61,15 @@ export default async function Page() {
       sort: '-publishedAt',
       where: sidebarWhere,
       select: ARTICLE_SELECT,
+    }),
+    payload.find({
+      collection: 'multimedia',
+      depth: 1,
+      limit: 10,
+      overrideAccess: false,
+      sort: '-publishedAt',
+      where: { _status: { equals: 'published' } },
+      select: MULTIMEDIA_SELECT,
     }),
     ...ARTICLE_SECTIONS.map(({ value }) =>
       payload.find({
@@ -119,6 +138,17 @@ export default async function Page() {
             columnsClassName="sm:grid-cols-2 lg:grid-cols-4"
             href={`/${kulturaSection.value}`}
             title={kulturaSection.label}
+          />
+        </div>
+      )}
+
+      {multimediaResult.docs.length > 0 && (
+        <div className="container mt-8">
+          <div className="border-t border-border mb-8" />
+          <MultimediaSectionRow
+            href="/multimedia"
+            items={multimediaResult.docs}
+            title="Multimedia"
           />
         </div>
       )}
