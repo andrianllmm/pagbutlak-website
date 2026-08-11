@@ -28,6 +28,28 @@ export function getTikTokVideoId(url: string): string | null {
   return match ? match[1] : null
 }
 
+// Facebook's video plugin (plugins/video.php) requires the canonical post/reel
+// URL as its `href` param — it does not follow redirects itself, so short
+// share links (facebook.com/share/v/<code>/) resolve to "Video Unavailable"
+// unless we resolve them to their canonical form first.
+export async function resolveFacebookCanonicalUrl(url: string): Promise<string> {
+  if (!/facebook\.com\/share\//.test(url)) {
+    return url
+  }
+
+  const attempt = async (): Promise<string | null> => {
+    try {
+      const response = await fetch(url, { method: 'HEAD', redirect: 'follow' })
+      const resolvedUrl = new URL(response.url)
+      return `${resolvedUrl.origin}${resolvedUrl.pathname}`
+    } catch {
+      return null
+    }
+  }
+
+  return (await attempt()) ?? (await attempt()) ?? url
+}
+
 export async function getAutoThumbnailUrl({ platform, url }: PlatformUrl): Promise<string | null> {
   switch (platform) {
     case 'youtube': {

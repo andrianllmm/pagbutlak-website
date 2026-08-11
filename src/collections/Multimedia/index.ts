@@ -4,7 +4,7 @@ import { slugField } from 'payload'
 import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
 import { MULTIMEDIA_PLATFORMS } from '@/constants/multimediaPlatforms'
-import { getAutoThumbnailUrl } from '@/utilities/multimediaEmbed'
+import { getAutoThumbnailUrl, resolveFacebookCanonicalUrl } from '@/utilities/multimediaEmbed'
 
 export const Multimedia: CollectionConfig<'multimedia'> = {
   slug: 'multimedia',
@@ -39,6 +39,17 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       type: 'text',
       admin: {
         description: 'Link to the video on YouTube, Facebook, or TikTok.',
+      },
+      hooks: {
+        beforeChange: [
+          async ({ siblingData, value }) => {
+            const data = siblingData as { platform?: string }
+            if (data?.platform !== 'facebook' || typeof value !== 'string') {
+              return value
+            }
+            return resolveFacebookCanonicalUrl(value)
+          },
+        ],
       },
       required: true,
     },
