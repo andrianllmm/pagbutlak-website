@@ -61,8 +61,7 @@ const MULTIMEDIA: SeedMultimediaInput[] = [
 export function generateSeedMultimedia(): RequiredDataFromCollectionSlug<'multimedia'>[] {
   return MULTIMEDIA.map(({ title, url, caption, publishedAt }) => ({
     title,
-    platform: 'tiktok',
-    url,
+    links: [{ url }],
     caption,
     publishedAt,
     slug: slugify(title),

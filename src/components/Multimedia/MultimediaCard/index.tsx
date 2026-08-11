@@ -1,23 +1,19 @@
 'use client'
 import Link from 'next/link'
-import { Play } from 'lucide-react'
+import { Link as LinkIcon, Play } from 'lucide-react'
 import React from 'react'
 
-import { MULTIMEDIA_PLATFORMS } from '@/constants/multimediaPlatforms'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
+import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
 import type { Multimedia } from '@/payload-types'
 
 export type CardDoc = Pick<
   Multimedia,
-  'slug' | 'title' | 'platform' | 'thumbnail' | 'autoThumbnailUrl' | 'publishedAt'
+  'slug' | 'title' | 'links' | 'thumbnail' | 'autoThumbnailUrl' | 'publishedAt'
 >
-
-function getPlatformLabel(platform: Multimedia['platform']): string {
-  return MULTIMEDIA_PLATFORMS.find((item) => item.value === platform)?.label ?? platform
-}
 
 function getThumbnailSrc(doc: CardDoc): string | null {
   const { thumbnail, autoThumbnailUrl } = doc
@@ -38,11 +34,10 @@ export const MultimediaCard: React.FC<{
   doc: CardDoc
 }> = ({ className, doc }) => {
   const { card, link } = useClickableCard({})
-  const { slug, title, platform, publishedAt } = doc
+  const { slug, title, links, publishedAt } = doc
 
   const href = `/multimedia/${slug}`
   const thumbnailSrc = getThumbnailSrc(doc)
-  const PlatformIcon = MULTIMEDIA_PLATFORM_ICONS[platform]
 
   return (
     <article
@@ -78,7 +73,11 @@ export const MultimediaCard: React.FC<{
         </div>
 
         <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
-          <PlatformIcon className="size-4" title={getPlatformLabel(platform)} />
+          {links?.map((item, index) => {
+            const platform = getPlatformFromUrl(item.url)
+            const Icon = platform ? MULTIMEDIA_PLATFORM_ICONS[platform] : LinkIcon
+            return <Icon className="size-4" key={index} title={platform ?? 'Link'} />
+          })}
           {publishedAt && <div>{formatReadableDate(publishedAt)}</div>}
         </div>
       </div>

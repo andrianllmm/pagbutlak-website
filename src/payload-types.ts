@@ -788,13 +788,15 @@ export interface Form {
 export interface Multimedia {
   id: number;
   title: string;
-  platform: 'youtube' | 'facebook' | 'tiktok';
   /**
-   * Link to the video on YouTube, Facebook, or TikTok.
+   * Link(s) to this video on YouTube, Facebook, and/or TikTok. Add one per platform it was posted to. The platform is detected automatically from each URL.
    */
-  url: string;
+  links: {
+    url: string;
+    id?: string | null;
+  }[];
   /**
-   * Optional for YouTube and TikTok, which pull a default thumbnail automatically. Required for Facebook, which has no automatic thumbnail.
+   * Optional if any linked platform is YouTube or TikTok, which pull a default thumbnail automatically. Required otherwise (e.g. Facebook-only), since it has no automatic thumbnail.
    */
   thumbnail?: (number | null) | Media;
   autoThumbnailUrl?: string | null;
@@ -1424,8 +1426,12 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface MultimediaSelect<T extends boolean = true> {
   title?: T;
-  platform?: T;
-  url?: T;
+  links?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
   thumbnail?: T;
   autoThumbnailUrl?: T;
   caption?: T;

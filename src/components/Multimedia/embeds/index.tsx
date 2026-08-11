@@ -1,24 +1,30 @@
 import React from 'react'
 
 import type { MultimediaPlatform } from '@/constants/multimediaPlatforms'
+import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
+import { EmbedFallback } from './EmbedFallback'
 import { FacebookEmbed } from './FacebookEmbed'
 import { TikTokEmbed } from './TikTokEmbed'
 import type { MultimediaEmbedProps } from './types'
 import { YouTubeEmbed } from './YouTubeEmbed'
 
-// Add a new platform by adding it to `MULTIMEDIA_PLATFORMS`, creating a
-// component here that implements `MultimediaEmbedProps`, and registering it
-// below. No other file needs to know a new platform exists.
+// Add a new platform by adding it to `MULTIMEDIA_PLATFORMS`, teaching
+// `getPlatformFromUrl` to recognize its URLs, creating a component here that
+// implements `MultimediaEmbedProps`, and registering it below. No other file
+// needs to know a new platform exists.
 const EMBED_COMPONENTS: Record<MultimediaPlatform, React.FC<MultimediaEmbedProps>> = {
   facebook: FacebookEmbed,
   tiktok: TikTokEmbed,
   youtube: YouTubeEmbed,
 }
 
-export const MultimediaEmbed: React.FC<MultimediaEmbedProps & { platform: MultimediaPlatform }> = ({
-  platform,
-  ...props
-}) => {
+export const MultimediaEmbed: React.FC<MultimediaEmbedProps> = (props) => {
+  const platform = getPlatformFromUrl(props.url)
+
+  if (!platform) {
+    return <EmbedFallback className={props.className} />
+  }
+
   const Embed = EMBED_COMPONENTS[platform]
   // Some platform widgets (e.g. TikTok's embed.js) mutate their container's
   // DOM directly outside of React. On client-side navigation between two

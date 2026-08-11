@@ -3,8 +3,11 @@ import { slugField } from 'payload'
 
 import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
-import { MULTIMEDIA_PLATFORMS } from '@/constants/multimediaPlatforms'
-import { getAutoThumbnailUrl, resolveFacebookCanonicalUrl } from '@/utilities/multimediaEmbed'
+import {
+  getAutoThumbnailUrl,
+  getPlatformFromUrl,
+  resolveFacebookCanonicalUrl,
+} from '@/utilities/multimediaEmbed'
 
 export const Multimedia: CollectionConfig<'multimedia'> = {
   slug: 'multimedia',
@@ -15,7 +18,7 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
     update: authenticated,
   },
   admin: {
-    defaultColumns: ['title', 'platform', 'slug', 'updatedAt'],
+    defaultColumns: ['title', 'slug', 'updatedAt'],
     useAsTitle: 'title',
   },
   labels: {
@@ -29,28 +32,30 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       required: true,
     },
     {
-      name: 'platform',
-      type: 'select',
-      options: MULTIMEDIA_PLATFORMS as any as { label: string; value: string }[],
-      required: true,
-    },
-    {
-      name: 'url',
-      type: 'text',
+      name: 'links',
+      type: 'array',
       admin: {
-        description: 'Link to the video on YouTube, Facebook, or TikTok.',
+        description:
+          'Link(s) to this video on YouTube, Facebook, and/or TikTok. Add one per platform it was posted to. The platform is detected automatically from each URL.',
       },
-      hooks: {
-        beforeChange: [
-          async ({ siblingData, value }) => {
-            const data = siblingData as { platform?: string }
-            if (data?.platform !== 'facebook' || typeof value !== 'string') {
-              return value
-            }
-            return resolveFacebookCanonicalUrl(value)
+      fields: [
+        {
+          name: 'url',
+          type: 'text',
+          required: true,
+          hooks: {
+            beforeChange: [
+              async ({ value }) => {
+                if (typeof value !== 'string' || getPlatformFromUrl(value) !== 'facebook') {
+                  return value
+                }
+                return resolveFacebookCanonicalUrl(value)
+              },
+            ],
           },
-        ],
-      },
+        },
+      ],
+      minRows: 1,
       required: true,
     },
     {
@@ -58,12 +63,19 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       type: 'upload',
       admin: {
         description:
-          'Optional for YouTube and TikTok, which pull a default thumbnail automatically. Required for Facebook, which has no automatic thumbnail.',
+          'Optional if any linked platform is YouTube or TikTok, which pull a default thumbnail automatically. Required otherwise (e.g. Facebook-only), since it has no automatic thumbnail.',
       },
       relationTo: 'media',
-      validate: ((value: unknown, { siblingData }: { siblingData: { platform?: string } }) => {
-        if (siblingData?.platform === 'facebook' && !value) {
-          return 'A thumbnail is required for Facebook videos.'
+      validate: ((
+        value: unknown,
+        { siblingData }: { siblingData: { links?: { url?: string }[] } },
+      ) => {
+        const hasAutoThumbnailSource = (siblingData?.links ?? []).some((link) => {
+          const platform = link?.url ? getPlatformFromUrl(link.url) : null
+          return platform === 'youtube' || platform === 'tiktok'
+        })
+        if (!hasAutoThumbnailSource && !value) {
+          return 'A thumbnail is required unless at least one linked URL is YouTube or TikTok.'
         }
         return true
       }) as any,
@@ -78,16 +90,18 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       hooks: {
         beforeChange: [
           async ({ siblingData }) => {
-            const data = siblingData as { platform?: string; url?: string }
-            if (!data?.platform || !data?.url) {
-              return undefined
+            const links = (siblingData as { links?: { url?: string }[] })?.links ?? []
+            for (const link of links) {
+              const platform = link?.url ? getPlatformFromUrl(link.url) : null
+              if (!platform || !link?.url) {
+                continue
+              }
+              const thumbnailUrl = await getAutoThumbnailUrl({ platform, url: link.url })
+              if (thumbnailUrl) {
+                return thumbnailUrl
+              }
             }
-            return (
-              (await getAutoThumbnailUrl({
-                platform: data.platform as never,
-                url: data.url,
-              })) ?? undefined
-            )
+            return undefined
           },
         ],
       },

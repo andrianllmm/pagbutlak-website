@@ -7,6 +7,7 @@ import * as migration_20260723_120033_add_articles_reading_time_field from './20
 import * as migration_20260804_062947_add_media_prefix_field from './20260804_062947_add_media_prefix_field'
 import * as migration_20260807_043333_rework_footer_nav_groups from './20260807_043333_rework_footer_nav_groups'
 import * as migration_20260810_184715_add_multimedia_collection from './20260810_184715_add_multimedia_collection'
+import * as migration_20260811_064548_restructure_multimedia_links from './20260811_064548_restructure_multimedia_links'
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260810_184715_add_multimedia_collection.up,
     down: migration_20260810_184715_add_multimedia_collection.down,
     name: '20260810_184715_add_multimedia_collection',
+  },
+  {
+    up: migration_20260811_064548_restructure_multimedia_links.up,
+    down: migration_20260811_064548_restructure_multimedia_links.down,
+    name: '20260811_064548_restructure_multimedia_links',
   },
 ]

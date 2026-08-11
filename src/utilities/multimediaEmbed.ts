@@ -28,6 +28,19 @@ export function getTikTokVideoId(url: string): string | null {
   return match ? match[1] : null
 }
 
+export function getPlatformFromUrl(url: string): MultimediaPlatform | null {
+  if (/(^|\/\/)(www\.)?(youtube\.com|youtu\.be)\//.test(url)) {
+    return 'youtube'
+  }
+  if (/(^|\/\/)(www\.)?facebook\.com\//.test(url)) {
+    return 'facebook'
+  }
+  if (/(^|\/\/)(www\.)?tiktok\.com\//.test(url)) {
+    return 'tiktok'
+  }
+  return null
+}
+
 // Facebook's video plugin (plugins/video.php) requires the canonical post/reel
 // URL as its `href` param — it does not follow redirects itself, so short
 // share links (facebook.com/share/v/<code>/) resolve to "Video Unavailable"

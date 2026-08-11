@@ -27,7 +27,7 @@ const ARTICLE_SELECT = {
 const MULTIMEDIA_SELECT = {
   title: true,
   slug: true,
-  platform: true,
+  links: true,
   thumbnail: true,
   autoThumbnailUrl: true,
   publishedAt: true,
