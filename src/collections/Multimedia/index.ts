@@ -89,7 +89,7 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       },
       hooks: {
         beforeChange: [
-          async ({ siblingData }) => {
+          async ({ siblingData, value }) => {
             const links = (siblingData as { links?: { url?: string }[] })?.links ?? []
             for (const link of links) {
               const platform = link?.url ? getPlatformFromUrl(link.url) : null
@@ -101,7 +101,7 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
                 return thumbnailUrl
               }
             }
-            return undefined
+            return value
           },
         ],
       },
