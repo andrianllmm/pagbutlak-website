@@ -111,6 +111,22 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       type: 'textarea',
     },
     {
+      name: 'relatedMultimedia',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      filterOptions: ({ id }) => {
+        return {
+          id: {
+            not_in: [id],
+          },
+        }
+      },
+      hasMany: true,
+      relationTo: 'multimedia',
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {

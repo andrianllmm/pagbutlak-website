@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { Link as LinkIcon } from 'lucide-react'
 import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs'
+import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
@@ -88,6 +89,15 @@ export default async function MultimediaPage({ params: paramsPromise }: Args) {
           )}
         </div>
       </div>
+
+      {item.relatedMultimedia && item.relatedMultimedia.length > 0 && (
+        <div className="mx-4 md:mx-8 lg:mx-12 my-16 py-8 border-t border-border">
+          <h2 className="text-lg font-semibold mb-4">Related Multimedia</h2>
+          <RelatedMultimedia
+            docs={item.relatedMultimedia.filter((doc) => typeof doc === 'object')}
+          />
+        </div>
+      )}
     </article>
   )
 }
@@ -117,6 +127,7 @@ const queryMultimediaBySlug = cache(async ({ slug }: { slug: string }) => {
       links: true,
       caption: true,
       publishedAt: true,
+      relatedMultimedia: true,
     },
     where: {
       slug: {

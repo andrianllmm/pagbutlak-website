@@ -801,6 +801,7 @@ export interface Multimedia {
   thumbnail?: (number | null) | Media;
   autoThumbnailUrl?: string | null;
   caption?: string | null;
+  relatedMultimedia?: (number | Multimedia)[] | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1435,6 +1436,7 @@ export interface MultimediaSelect<T extends boolean = true> {
   thumbnail?: T;
   autoThumbnailUrl?: T;
   caption?: T;
+  relatedMultimedia?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
