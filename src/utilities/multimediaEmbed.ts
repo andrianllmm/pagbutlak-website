@@ -41,10 +41,8 @@ export function getPlatformFromUrl(url: string): MultimediaPlatform | null {
   return null
 }
 
-// Facebook's video plugin (plugins/video.php) requires the canonical post/reel
-// URL as its `href` param — it does not follow redirects itself, so short
-// share links (facebook.com/share/v/<code>/) resolve to "Video Unavailable"
-// unless we resolve them to their canonical form first.
+// The Facebook video plugin needs the canonical post/reel URL and does not
+// follow redirects, so share links must be resolved before embedding.
 export async function resolveFacebookCanonicalUrl(url: string): Promise<string> {
   if (!/facebook\.com\/share\//.test(url)) {
     return url

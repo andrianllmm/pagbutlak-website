@@ -4,6 +4,5 @@ export type MultimediaEmbedProps = {
   url: string
 }
 
-// Matches the fixed width TikTok/Reels/Shorts embeds use natively, so the
-// player doesn't stretch to fill the viewport on narrow screens.
+// Fixed width used natively by TikTok/Reels/Shorts embeds.
 export const EMBED_WIDTH_CLASS = 'w-[325px] max-w-full'

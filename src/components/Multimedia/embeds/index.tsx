@@ -8,10 +8,9 @@ import { TikTokEmbed } from './TikTokEmbed'
 import type { MultimediaEmbedProps } from './types'
 import { YouTubeEmbed } from './YouTubeEmbed'
 
-// Add a new platform by adding it to `MULTIMEDIA_PLATFORMS`, teaching
-// `getPlatformFromUrl` to recognize its URLs, creating a component here that
-// implements `MultimediaEmbedProps`, and registering it below. No other file
-// needs to know a new platform exists.
+// To add a platform: add it to MULTIMEDIA_PLATFORMS, teach getPlatformFromUrl
+// its URL pattern, add a component implementing MultimediaEmbedProps, and
+// register it below.
 const EMBED_COMPONENTS: Record<MultimediaPlatform, React.FC<MultimediaEmbedProps>> = {
   facebook: FacebookEmbed,
   tiktok: TikTokEmbed,
@@ -26,11 +25,7 @@ export const MultimediaEmbed: React.FC<MultimediaEmbedProps> = (props) => {
   }
 
   const Embed = EMBED_COMPONENTS[platform]
-  // Some platform widgets (e.g. TikTok's embed.js) mutate their container's
-  // DOM directly outside of React. On client-side navigation between two
-  // multimedia pages, React would otherwise try to reuse/update that same
-  // DOM node, colliding with the widget's own mutations. Keying on the
-  // video URL forces a full unmount/remount per video, giving the widget a
-  // clean DOM node every time.
+  // Force a fresh DOM node per video, since some widgets (e.g. TikTok's
+  // embed.js) mutate their container outside of React.
   return <Embed key={props.url} {...props} />
 }

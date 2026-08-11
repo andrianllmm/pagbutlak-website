@@ -222,8 +222,8 @@ export const seed = async ({
 
   const multimediaIdsByTitle = new Map<string, number>()
 
-  // Do not create with `Promise.all` — related multimedia are linked by title
-  // in a second pass below, which needs every doc to already have an id.
+  // Do not use `Promise.all` here. Related multimedia are linked by title in
+  // a second pass below, which needs every doc to already have an id.
   for (const multimediaData of generateSeedMultimedia({ categories: categoryDocs })) {
     const multimediaDoc = await payload.create({
       collection: 'multimedia',

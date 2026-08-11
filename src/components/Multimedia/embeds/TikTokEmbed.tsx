@@ -18,17 +18,13 @@ declare global {
 }
 
 export const TikTokEmbed: React.FC<MultimediaEmbedProps> = ({ className, title, url }) => {
-  // TikTok's embed.js selects nodes to process via
-  // `document.getElementsByClassName('tiktok-embed')` filtered to
-  // `tagName === 'blockquote'` (see their collectNodes()), so the ref passed
-  // to lib.render() must point at the blockquote itself, not a wrapper.
+  // TikTok's embed.js only processes blockquote elements, so the ref must
+  // point at the blockquote itself, not a wrapper.
   const blockquoteRef = useRef<HTMLQuoteElement>(null)
   const videoId = getTikTokVideoId(url)
 
-  // TikTok's embed.js only auto-scans the DOM once, on its own load event.
-  // On client-side navigation between multimedia pages the script is already
-  // loaded (Next dedupes the <Script> by src), so we have to explicitly ask
-  // it to (re-)render this specific blockquote.
+  // The script only auto-scans the DOM once. On client-side navigation it is
+  // already loaded, so we render this blockquote manually.
   useEffect(() => {
     if (videoId && window.tiktokEmbed?.lib?.render && blockquoteRef.current) {
       window.tiktokEmbed.lib.render([blockquoteRef.current])
