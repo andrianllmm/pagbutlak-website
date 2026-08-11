@@ -117,6 +117,7 @@ const queryMultimediaBySlug = cache(async ({ slug }: { slug: string }) => {
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
     collection: 'multimedia',
+    depth: 2,
     draft,
     limit: 1,
     overrideAccess: draft,
