@@ -111,6 +111,15 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
       type: 'textarea',
     },
     {
+      name: 'categories',
+      type: 'relationship',
+      admin: {
+        position: 'sidebar',
+      },
+      hasMany: true,
+      relationTo: 'categories',
+    },
+    {
       name: 'relatedMultimedia',
       type: 'relationship',
       admin: {

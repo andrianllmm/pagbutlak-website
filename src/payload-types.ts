@@ -801,6 +801,7 @@ export interface Multimedia {
   thumbnail?: (number | null) | Media;
   autoThumbnailUrl?: string | null;
   caption?: string | null;
+  categories?: (number | Category)[] | null;
   relatedMultimedia?: (number | Multimedia)[] | null;
   publishedAt?: string | null;
   /**
@@ -1436,6 +1437,7 @@ export interface MultimediaSelect<T extends boolean = true> {
   thumbnail?: T;
   autoThumbnailUrl?: T;
   caption?: T;
+  categories?: T;
   relatedMultimedia?: T;
   publishedAt?: T;
   generateSlug?: T;
