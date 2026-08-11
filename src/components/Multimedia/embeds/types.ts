@@ -1,5 +1,7 @@
 export type MultimediaEmbedProps = {
+  autoplay?: boolean
   className?: string
+  muted?: boolean
   title: string
   url: string
 }

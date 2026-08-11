@@ -25,7 +25,5 @@ export const MultimediaEmbed: React.FC<MultimediaEmbedProps> = (props) => {
   }
 
   const Embed = EMBED_COMPONENTS[platform]
-  // Force a fresh DOM node per video, since some widgets (e.g. TikTok's
-  // embed.js) mutate their container outside of React.
-  return <Embed key={props.url} {...props} />
+  return <Embed {...props} />
 }
