@@ -1,18 +1,14 @@
 'use client'
 
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Combobox } from '@/components/ui/combobox'
+import { DatePickerWithRange } from '@/components/ui/datePickerRange'
 import { Label } from '@/components/ui/label'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { format } from 'date-fns'
 import { ListFilter } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { type DateRange } from 'react-day-picker'
 
 type Option = {
   label: string
@@ -41,8 +37,6 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
   const router = useRouter()
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
-  const [authorQuery, setAuthorQuery] = useState('')
-  const [isAuthorListOpen, setIsAuthorListOpen] = useState(false)
 
   const section = searchParams.get('section') ?? ANY_VALUE
   const author = searchParams.get('author') ?? ANY_VALUE
@@ -52,16 +46,34 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
 
   const hasActiveFilters = FILTER_PARAM_KEYS.some((key) => searchParams.get(key))
 
-  const selectedAuthor = authors.find((option) => option.value === author)
-  const filteredAuthors = authors.filter((option) =>
-    option.label.toLowerCase().includes(authorQuery.toLowerCase()),
-  )
+  const dateRange: DateRange | undefined =
+    from || to
+      ? {
+          from: from ? new Date(`${from}T00:00:00`) : undefined,
+          to: to ? new Date(`${to}T00:00:00`) : undefined,
+        }
+      : undefined
 
-  const selectAuthor = (value: string) => {
-    updateParam('author', value)
-    setAuthorQuery('')
-    setIsAuthorListOpen(false)
+  const handleDateRangeChange = (range: DateRange | undefined) => {
+    const params = new URLSearchParams(searchParams.toString())
+
+    if (range?.from) {
+      params.set('from', format(range.from, 'yyyy-MM-dd'))
+    } else {
+      params.delete('from')
+    }
+
+    if (range?.to) {
+      params.set('to', format(range.to, 'yyyy-MM-dd'))
+    } else {
+      params.delete('to')
+    }
+
+    router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`)
   }
+
+  const sectionOptions: Option[] = [{ label: 'Any', value: ANY_VALUE }, ...sections]
+  const authorOptions: Option[] = [{ label: 'Any', value: ANY_VALUE }, ...authors]
 
   const updateParam = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -91,101 +103,48 @@ export function SearchFilters({ sections, authors, children }: SearchFiltersProp
 
       {isOpen && (
         <div className="mt-4 grid grid-cols-2 gap-6 text-left md:grid-cols-5">
-          <div className="grid gap-1.5" >
-            <Label>Section</Label>
-            <Select value={section} onValueChange={(value) => updateParam('section', value)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={ANY_VALUE}>Any</SelectItem>
-                {sections.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="grid gap-1.5">
+            <Label htmlFor="section-search">Section</Label>
+            <Combobox
+              id="section-search"
+              options={sectionOptions}
+              value={section}
+              onChange={(value) => updateParam('section', value)}
+              placeholder="Any"
+              showSearch={false}
+              className="w-full"
+            />
           </div>
 
-          <div className="relative grid gap-1.5">
+          <div className="grid gap-1.5">
             <Label htmlFor="author-search">Author</Label>
-            <Input
+            <Combobox
               id="author-search"
-              placeholder={isAuthorListOpen? "": "Any"}
-              autoComplete="off"
-              value={isAuthorListOpen ? authorQuery : (selectedAuthor?.label ?? '')}
-              onFocus={() => {
-                setAuthorQuery('')
-                setIsAuthorListOpen(true)
-              }}
-              onChange={(event) => setAuthorQuery(event.target.value)}
-              onBlur={() => setIsAuthorListOpen(false)}
+              options={authorOptions}
+              value={author}
+              onChange={(value) => updateParam('author', value)}
+              placeholder="Any"
+              searchPlaceholder="Search authors..."
+              emptyText="No authors found."
+              className="w-full"
             />
-            {isAuthorListOpen && (
-              <div className="absolute top-full z-10 mt-1 max-h-48 w-full overflow-auto rounded border bg-card shadow-md">
-                <button
-                  type="button"
-                  className="block w-full px-3 py-1.5 text-left text-sm hover:bg-accent"
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => selectAuthor(ANY_VALUE)}
-                >
-                  Any
-                </button>
-                {filteredAuthors.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className="block w-full px-3 py-1.5 text-left text-sm hover:bg-accent"
-                    onMouseDown={(event) => event.preventDefault()}
-                    onClick={() => selectAuthor(option.value)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-                {filteredAuthors.length === 0 && (
-                  <div className="px-3 py-1.5 text-sm text-muted-foreground">No authors found</div>
-                )}
-              </div>
-            )}
           </div>
 
           <div className="grid gap-1.5 md:col-span-2">
-            <Label>Published Date</Label>
-            <div className="flex items-center gap-2">
-              <Input
-                type="date"
-                aria-label="From"
-                value={from}
-                onChange={(event) => updateParam('from', event.target.value)}
-              />
-              <span className="text-muted-foreground">–</span>
-              <Input
-                type="date"
-                aria-label="To"
-                value={to}
-                onChange={(event) => updateParam('to', event.target.value)}
-              />
-            </div>
+            <DatePickerWithRange value={dateRange} onChange={handleDateRangeChange} />
           </div>
 
           <div className="grid gap-1.5 pl-2">
-            <Label>Reading Time</Label>
-            <Select
+            <Label htmlFor="reading-time-search">Reading Time</Label>
+            <Combobox
+              id="reading-time-search"
+              options={READING_TIME_OPTIONS}
               value={readingTime}
-              onValueChange={(value) => updateParam('readingTime', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {READING_TIME_OPTIONS.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              onChange={(value) => updateParam('readingTime', value)}
+              placeholder="Any"
+              showSearch={false}
+              className="w-full"
+            />
           </div>
 
           <Button
