@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Articles } from './collections/Articles'
 import { Authors } from './collections/Authors'
+import { Issues } from './collections/Issues'
 import { Multimedia } from './collections/Multimedia'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
@@ -66,7 +67,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URI || '',
     },
   }),
-  collections: [Pages, Articles, Authors, Media, Categories, Multimedia, Users],
+  collections: [Pages, Articles, Authors, Media, Categories, Multimedia, Issues, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [
