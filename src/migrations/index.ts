@@ -58,7 +58,6 @@ export const migrations = [
     down: migration_20260810_194922_add_search_section_field.down,
     name: '20260810_194922_add_search_section_field'
   },
-];
     up: migration_20260810_184715_add_multimedia_collection.up,
     down: migration_20260810_184715_add_multimedia_collection.down,
     name: '20260810_184715_add_multimedia_collection',
