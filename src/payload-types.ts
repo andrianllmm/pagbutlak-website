@@ -72,6 +72,7 @@ export interface Config {
     authors: Author;
     media: Media;
     categories: Category;
+    multimedia: Multimedia;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -95,6 +96,7 @@ export interface Config {
     authors: AuthorsSelect<false> | AuthorsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    multimedia: MultimediaSelect<false> | MultimediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -781,6 +783,38 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "multimedia".
+ */
+export interface Multimedia {
+  id: number;
+  title: string;
+  /**
+   * Link(s) to this video on YouTube, Facebook, and/or TikTok. Add one per platform it was posted to. The platform is detected automatically from each URL.
+   */
+  links: {
+    url: string;
+    id?: string | null;
+  }[];
+  /**
+   * Optional if any linked platform is YouTube or TikTok, which pull a default thumbnail automatically. Required otherwise (e.g. Facebook-only), since it has no automatic thumbnail.
+   */
+  thumbnail?: (number | null) | Media;
+  autoThumbnailUrl?: string | null;
+  caption?: string | null;
+  categories?: (number | Category)[] | null;
+  relatedMultimedia?: (number | Multimedia)[] | null;
+  publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -1018,6 +1052,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'multimedia';
+        value: number | Multimedia;
       } | null)
     | ({
         relationTo: 'users';
@@ -1384,6 +1422,30 @@ export interface CategoriesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "multimedia_select".
+ */
+export interface MultimediaSelect<T extends boolean = true> {
+  title?: T;
+  links?:
+    | T
+    | {
+        url?: T;
+        id?: T;
+      };
+  thumbnail?: T;
+  autoThumbnailUrl?: T;
+  caption?: T;
+  categories?: T;
+  relatedMultimedia?: T;
+  publishedAt?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1848,6 +1910,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'articles';
           value: number | Article;
+        } | null)
+      | ({
+          relationTo: 'multimedia';
+          value: number | Multimedia;
         } | null);
     global?: string | null;
     user?: (number | null) | User;

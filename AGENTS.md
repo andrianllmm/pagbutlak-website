@@ -6,7 +6,7 @@ This file provides guidance to AI coding agents working with code in this reposi
 
 Pagbutlak Website is a news publishing platform for UPV Pagbutlak, the official student and community publication of the University of the Philippines Visayas (UPV) - College of Arts and Sciences (CAS).
 
-Content sections: News, Features, Opinion, Kultura.
+Content sections: News, Features, Opinion, Kultura. There's also a Multimedia section for video content (YouTube, Facebook, TikTok).
 
 ## Project Structure
 
@@ -14,6 +14,7 @@ Content sections: News, Features, Opinion, Kultura.
   - `(sections)/` - Section listing pages (news, features, opinion, kultura)
   - `articles/` - Article listing + `[slug]` detail pages
   - `authors/` - Author listing + `[slug]` detail pages
+  - `multimedia/` - Multimedia listing + `[slug]` detail pages
   - `[slug]/` - Dynamic slug pages (e.g., static pages)
 - `src/app/(payload)/` - Payload admin panel + API routes
 - `src/blocks/` - CMS block components for rich text

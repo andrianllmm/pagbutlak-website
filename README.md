@@ -10,7 +10,7 @@ Official website of Pagbutlak UPV
 
 ## About The Project
 
-This project is the official website for the student and community publication of CAS in UP Visayas, Pagbutlak.
+This project is the official website for the student and community publication of CAS in UP Visayas, Pagbutlak. It publishes articles across News, Opinion, Features, and Kultura, plus a Multimedia section for video content.
 
 ## Getting Started
 

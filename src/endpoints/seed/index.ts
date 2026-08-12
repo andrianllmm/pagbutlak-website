@@ -8,6 +8,7 @@ import { terms } from './terms'
 import { privacy } from './privacy'
 import { image1 } from './image'
 import { generateSeedArticles } from './articles'
+import { generateSeedMultimedia, MULTIMEDIA_RELATED } from './multimedia'
 import path from 'path'
 import fs from 'fs'
 
@@ -17,6 +18,7 @@ const collections: CollectionSlug[] = [
   'pages',
   'articles',
   'authors',
+  'multimedia',
   'forms',
   'form-submissions',
   'search',
@@ -215,6 +217,47 @@ export const seed = async ({
       data: articleData,
     })
   }
+
+  payload.logger.info(`— Seeding multimedia...`)
+
+  const multimediaIdsByTitle = new Map<string, number>()
+
+  // Do not use `Promise.all` here. Related multimedia are linked by title in
+  // a second pass below, which needs every doc to already have an id.
+  for (const multimediaData of generateSeedMultimedia({ categories: categoryDocs })) {
+    const multimediaDoc = await payload.create({
+      collection: 'multimedia',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: multimediaData,
+    })
+    multimediaIdsByTitle.set(multimediaData.title, multimediaDoc.id)
+  }
+
+  await Promise.all(
+    Object.entries(MULTIMEDIA_RELATED).map(([title, relatedTitles]) => {
+      const id = multimediaIdsByTitle.get(title)
+      const relatedIds = relatedTitles
+        .map((relatedTitle) => multimediaIdsByTitle.get(relatedTitle))
+        .filter((relatedId): relatedId is number => relatedId !== undefined)
+
+      if (!id || relatedIds.length === 0) {
+        return null
+      }
+
+      return payload.update({
+        collection: 'multimedia',
+        id,
+        depth: 0,
+        context: {
+          disableRevalidate: true,
+        },
+        data: { relatedMultimedia: relatedIds },
+      })
+    }),
+  )
 
   payload.logger.info(`— Seeding forms...`)
 
