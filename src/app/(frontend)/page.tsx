@@ -10,6 +10,7 @@ import { ArticleCompactCard } from '@/components/Articles/ArticleCompactCard'
 import { ArticleFeaturedCard } from '@/components/Articles/ArticleFeaturedCard'
 import { HomeMasthead } from '@/components/HomeMasthead'
 import { HomeSectionRow } from '@/components/HomeSectionRow'
+import { IssueCard } from '@/components/Issues/IssueCard'
 import { MultimediaSectionRow } from '@/components/MultimediaSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
 import type { CardDoc } from '@/components/Articles/ArticleCard'
@@ -33,6 +34,14 @@ const MULTIMEDIA_SELECT = {
   publishedAt: true,
 } as const
 
+const ISSUES_SELECT = {
+  title: true,
+  volume: true,
+  issueNumber: true,
+  coverImage: true,
+  publishedAt: true,
+} as const
+
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
 
@@ -52,11 +61,11 @@ export default async function Page() {
     ? { and: [{ _status: { equals: 'published' } }, { id: { not_equals: featured.id } }] }
     : { _status: { equals: 'published' } }
 
-  const [sidebarResult, multimediaResult, ...sectionResults] = await Promise.all([
+  const [sidebarResult, multimediaResult, issuesResult, ...sectionResults] = await Promise.all([
     payload.find({
       collection: 'articles',
       depth: 1,
-      limit: 6,
+      limit: 4,
       overrideAccess: false,
       sort: '-publishedAt',
       where: sidebarWhere,
@@ -70,6 +79,15 @@ export default async function Page() {
       sort: '-publishedAt',
       where: { _status: { equals: 'published' } },
       select: MULTIMEDIA_SELECT,
+    }),
+    payload.find({
+      collection: 'issues',
+      depth: 1,
+      limit: 1,
+      overrideAccess: false,
+      sort: '-publishedAt',
+      where: { _status: { equals: 'published' } },
+      select: ISSUES_SELECT,
     }),
     ...ARTICLE_SECTIONS.map(({ value }) =>
       payload.find({
@@ -90,6 +108,7 @@ export default async function Page() {
 
   const kulturaSection = ARTICLE_SECTIONS.find((section) => section.value === 'kultura')
   const columnSections = ARTICLE_SECTIONS.filter((section) => section.value !== 'kultura')
+  const latestIssue = issuesResult.docs[0]
 
   return (
     <article className="pb-24">
@@ -127,6 +146,12 @@ export default async function Page() {
               <ArticleCompactCard key={index} doc={article} relationTo="articles" />
             ))}
           </div>
+
+          {latestIssue && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <IssueCard doc={latestIssue} />
+            </div>
+          )}
         </div>
       </div>
 
