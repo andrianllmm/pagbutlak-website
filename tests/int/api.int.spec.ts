@@ -46,7 +46,7 @@ describe('Articles collection access control', () => {
       context: { disableRevalidate: true },
     })
     authorId = author.id
-  })
+  }, 30000)
 
   afterAll(async () => {
     await payload.delete({

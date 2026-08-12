@@ -6,6 +6,10 @@ import * as migration_20260723_051537_add_search_published_at_and_reading_time_f
 import * as migration_20260723_120033_add_articles_reading_time_field from './20260723_120033_add_articles_reading_time_field'
 import * as migration_20260804_062947_add_media_prefix_field from './20260804_062947_add_media_prefix_field'
 import * as migration_20260807_043333_rework_footer_nav_groups from './20260807_043333_rework_footer_nav_groups'
+import * as migration_20260810_184715_add_multimedia_collection from './20260810_184715_add_multimedia_collection'
+import * as migration_20260811_064548_restructure_multimedia_links from './20260811_064548_restructure_multimedia_links'
+import * as migration_20260811_072800_add_related_multimedia from './20260811_072800_add_related_multimedia'
+import * as migration_20260811_074014_add_multimedia_categories from './20260811_074014_add_multimedia_categories'
 
 export const migrations = [
   {
@@ -47,5 +51,25 @@ export const migrations = [
     up: migration_20260807_043333_rework_footer_nav_groups.up,
     down: migration_20260807_043333_rework_footer_nav_groups.down,
     name: '20260807_043333_rework_footer_nav_groups',
+  },
+  {
+    up: migration_20260810_184715_add_multimedia_collection.up,
+    down: migration_20260810_184715_add_multimedia_collection.down,
+    name: '20260810_184715_add_multimedia_collection',
+  },
+  {
+    up: migration_20260811_064548_restructure_multimedia_links.up,
+    down: migration_20260811_064548_restructure_multimedia_links.down,
+    name: '20260811_064548_restructure_multimedia_links',
+  },
+  {
+    up: migration_20260811_072800_add_related_multimedia.up,
+    down: migration_20260811_072800_add_related_multimedia.down,
+    name: '20260811_072800_add_related_multimedia',
+  },
+  {
+    up: migration_20260811_074014_add_multimedia_categories.up,
+    down: migration_20260811_074014_add_multimedia_categories.down,
+    name: '20260811_074014_add_multimedia_categories',
   },
 ]

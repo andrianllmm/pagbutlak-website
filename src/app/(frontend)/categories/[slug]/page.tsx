@@ -4,6 +4,7 @@ import React from 'react'
 
 import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { CollectionArchive } from '@/components/CollectionArchive'
+import { MultimediaArchive } from '@/components/MultimediaArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
@@ -14,6 +15,7 @@ import { queryCategoryBySlug, queryCategoryChildren } from './queries'
 export const revalidate = 600
 
 const ARTICLE_LIMIT = 12
+const MULTIMEDIA_LIMIT = 8
 
 type Args = {
   params: Promise<{
@@ -49,6 +51,26 @@ export default async function Page({ params: paramsPromise }: Args) {
       meta: true,
       publishedAt: true,
       authors: true,
+    },
+  })
+
+  const multimedia = await payload.find({
+    collection: 'multimedia',
+    depth: 1,
+    limit: MULTIMEDIA_LIMIT,
+    overrideAccess: false,
+    sort: '-publishedAt',
+    where: {
+      categories: { in: categoryIds },
+      _status: { equals: 'published' },
+    },
+    select: {
+      title: true,
+      slug: true,
+      links: true,
+      thumbnail: true,
+      autoThumbnailUrl: true,
+      publishedAt: true,
     },
   })
 
@@ -90,6 +112,17 @@ export default async function Page({ params: paramsPromise }: Args) {
           />
         )}
       </div>
+
+      {multimedia.docs.length > 0 && (
+        <div className="mt-16">
+          <div className="container mb-8">
+            <div className="prose dark:prose-invert max-w-none">
+              <h2>Multimedia</h2>
+            </div>
+          </div>
+          <MultimediaArchive items={multimedia.docs} />
+        </div>
+      )}
     </div>
   )
 }
