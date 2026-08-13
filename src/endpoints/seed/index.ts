@@ -275,11 +275,17 @@ export const seed = async ({
     const [coverImageDoc, pdfDoc] = await Promise.all([
       payload.create({
         collection: 'media',
+        context: {
+          disableRevalidate: true,
+        },
         data: { alt: `${title} cover` },
         file: coverImageFile,
       }),
       payload.create({
         collection: 'media',
+        context: {
+          disableRevalidate: true,
+        },
         data: { alt: `${title} PDF` },
         file: pdfFile,
       }),

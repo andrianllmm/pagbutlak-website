@@ -12,6 +12,16 @@ export type SeedIssueInput = {
 
 export const ISSUES: SeedIssueInput[] = [
   {
+    title: 'Year 50, Issue 1',
+    volume: 50,
+    issueNumber: 1,
+    description:
+      'The first issue of Pagbutlak on its 50th anniversary chronicled the unbreakable link between education and activism; the enduring fight for accessible, quality education, and the broader struggle for social justice.',
+    publishedAt: '2025-02-16T00:00:00.000Z',
+    coverImageUrl: 'https://pagbutlak.org/wp-content/uploads/2025/02/out-now.png',
+    pdfUrl: 'https://pagbutlak.org/wp-content/uploads/2025/04/pagbutlak50_issue1.pdf',
+  },
+  {
     title: 'Year 51, Issue 1',
     volume: 51,
     issueNumber: 1,
