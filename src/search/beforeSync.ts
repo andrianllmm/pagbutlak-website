@@ -6,13 +6,14 @@ export const beforeSyncWithSearch: BeforeSync = async ({ req, originalDoc, searc
     doc: { relationTo: collection },
   } = searchDoc
 
-  const { slug, id, categories, authors, title, meta, publishedAt, content } = originalDoc
+  const { slug, id, categories, authors, title, meta, publishedAt, content, section } = originalDoc
 
   const modifiedDoc: DocToSync = {
     ...searchDoc,
     slug,
     authors,
     publishedAt,
+    section,
     readingTimeMinutes: getReadingTimeMinutes(content),
     meta: {
       ...meta,

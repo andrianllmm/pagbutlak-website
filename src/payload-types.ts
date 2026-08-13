@@ -896,6 +896,7 @@ export interface Search {
     relationTo: 'articles';
     value: number | Article;
   };
+  section?: ('news' | 'opinion' | 'feature' | 'kultura') | null;
   slug?: string | null;
   authors?: (number | Author)[] | null;
   publishedAt?: string | null;
@@ -1642,6 +1643,7 @@ export interface SearchSelect<T extends boolean = true> {
   title?: T;
   priority?: T;
   doc?: T;
+  section?: T;
   slug?: T;
   authors?: T;
   publishedAt?: T;

@@ -3,16 +3,24 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import React, { useState, useEffect } from 'react'
 import { useDebounce } from '@/utilities/useDebounce'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 export const Search: React.FC = () => {
   const [value, setValue] = useState('')
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   const debouncedValue = useDebounce(value)
 
   useEffect(() => {
-    router.push(`/search${debouncedValue ? `?q=${debouncedValue}` : ''}`)
+    const params = new URLSearchParams(searchParams.toString())
+    if (debouncedValue) {
+      params.set('q', debouncedValue)
+    } else {
+      params.delete('q')
+    }
+    router.push(`/search${params.toString() ? `?${params.toString()}` : ''}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [debouncedValue, router])
 
   return (

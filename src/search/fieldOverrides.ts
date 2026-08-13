@@ -1,6 +1,16 @@
 import { Field } from 'payload'
+import { ARTICLE_SECTIONS } from '@/constants/articleSections'
 
 export const searchFields: Field[] = [
+  {
+    name: 'section',
+    type: 'select',
+    index: true,
+    options: ARTICLE_SECTIONS as any as { label: string; value: string }[],
+    admin: {
+      readOnly: true,
+    },
+  },
   {
     name: 'slug',
     type: 'text',
