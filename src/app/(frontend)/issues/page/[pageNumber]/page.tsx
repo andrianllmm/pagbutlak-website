@@ -83,6 +83,7 @@ export async function generateStaticParams() {
   const { totalDocs } = await payload.count({
     collection: 'issues',
     overrideAccess: false,
+    where: { _status: { equals: 'published' } },
   })
 
   const totalPages = Math.ceil(totalDocs / 12)
