@@ -86,6 +86,7 @@ export const Issues: CollectionConfig<'issues'> = {
           collection: 'issues',
           limit: 1,
           overrideAccess: true,
+          req,
           where: {
             and: [
               { volume: { equals: volume } },
