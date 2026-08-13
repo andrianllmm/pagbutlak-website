@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { Download } from 'lucide-react'
 import { Media } from '@/components/Media'
+import { PDFViewer } from '@/components/PDFViewer'
 import { Button } from '@/components/ui/button'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
@@ -89,11 +90,7 @@ export default async function IssuePage({ params: paramsPromise }: Args) {
           </div>
         </div>
 
-        {pdfUrl && (
-          <div className="w-full max-w-[800px] mx-auto rounded-lg border border-border bg-card shadow-sm overflow-hidden">
-            <iframe className="w-full aspect-[3/4]" src={pdfUrl} title={`${item.title} PDF`} />
-          </div>
-        )}
+        {pdfUrl && <PDFViewer src={pdfUrl} title={`${item.title} PDF`} />}
       </div>
     </article>
   )
