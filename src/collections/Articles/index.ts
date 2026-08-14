@@ -11,9 +11,13 @@ import {
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { isAdmin } from '../../access/isAdmin'
+import { isAdminOrEditorOrOwner } from '../../access/isAdminOrEditorOrOwner'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { setCreatedBy } from '../../hooks/setCreatedBy'
+import { preventUnauthorizedPublish } from '../../hooks/preventUnauthorizedPublish'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { getReadingTimeMinutes } from '../../utilities/readingTime'
 import { revalidateArticle, revalidateDelete } from './hooks/revalidateArticle'
@@ -33,9 +37,9 @@ export const Articles: CollectionConfig<'articles'> = {
   slug: 'articles',
   access: {
     create: authenticated,
-    delete: authenticated,
+    delete: isAdminOrEditorOrOwner,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: isAdminOrEditorOrOwner,
   },
   // This config controls what's populated by default when an article is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -203,6 +207,19 @@ export const Articles: CollectionConfig<'articles'> = {
       required: true,
     },
     {
+      name: 'createdBy',
+      type: 'relationship',
+      access: {
+        update: isAdmin,
+      },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      hasMany: false,
+      relationTo: 'users',
+    },
+    {
       name: 'readingTimeMinutes',
       type: 'number',
       admin: {
@@ -220,6 +237,7 @@ export const Articles: CollectionConfig<'articles'> = {
     slugField(),
   ],
   hooks: {
+    beforeChange: [setCreatedBy, preventUnauthorizedPublish],
     afterChange: [revalidateArticle],
     afterDelete: [revalidateDelete],
   },

@@ -3,6 +3,10 @@ import { slugField } from 'payload'
 
 import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { isAdmin } from '@/access/isAdmin'
+import { isAdminOrEditorOrOwner } from '@/access/isAdminOrEditorOrOwner'
+import { setCreatedBy } from '@/hooks/setCreatedBy'
+import { preventUnauthorizedPublish } from '@/hooks/preventUnauthorizedPublish'
 import {
   getAutoThumbnailUrl,
   getPlatformFromUrl,
@@ -13,9 +17,9 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
   slug: 'multimedia',
   access: {
     create: authenticated,
-    delete: authenticated,
+    delete: isAdminOrEditorOrOwner,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: isAdminOrEditorOrOwner,
   },
   admin: {
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -155,8 +159,24 @@ export const Multimedia: CollectionConfig<'multimedia'> = {
         ],
       },
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      access: {
+        update: isAdmin,
+      },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      hasMany: false,
+      relationTo: 'users',
+    },
     slugField(),
   ],
+  hooks: {
+    beforeChange: [setCreatedBy, preventUnauthorizedPublish],
+  },
   versions: {
     drafts: {
       autosave: {
