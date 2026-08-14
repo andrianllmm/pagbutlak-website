@@ -9,6 +9,7 @@ import { privacy } from './privacy'
 import { image1 } from './image'
 import { generateSeedArticles } from './articles'
 import { generateSeedMultimedia, MULTIMEDIA_RELATED } from './multimedia'
+import { ISSUES, fetchAsPayloadFile } from './issues'
 import path from 'path'
 import fs from 'fs'
 
@@ -19,6 +20,7 @@ const collections: CollectionSlug[] = [
   'articles',
   'authors',
   'multimedia',
+  'issues',
   'forms',
   'form-submissions',
   'search',
@@ -258,6 +260,55 @@ export const seed = async ({
       })
     }),
   )
+
+  payload.logger.info(`— Seeding issues...`)
+
+  for (const issueData of ISSUES) {
+    const { title, volume, issueNumber, description, publishedAt, coverImageUrl, pdfUrl } =
+      issueData
+
+    const [coverImageFile, pdfFile] = await Promise.all([
+      fetchAsPayloadFile(coverImageUrl),
+      fetchAsPayloadFile(pdfUrl),
+    ])
+
+    const [coverImageDoc, pdfDoc] = await Promise.all([
+      payload.create({
+        collection: 'media',
+        context: {
+          disableRevalidate: true,
+        },
+        data: { alt: `${title} cover` },
+        file: coverImageFile,
+      }),
+      payload.create({
+        collection: 'media',
+        context: {
+          disableRevalidate: true,
+        },
+        data: { alt: `${title} PDF` },
+        file: pdfFile,
+      }),
+    ])
+
+    await payload.create({
+      collection: 'issues',
+      depth: 0,
+      context: {
+        disableRevalidate: true,
+      },
+      data: {
+        title,
+        volume,
+        issueNumber,
+        description,
+        publishedAt,
+        coverImage: coverImageDoc.id,
+        pdf: pdfDoc.id,
+        _status: 'published',
+      },
+    })
+  }
 
   payload.logger.info(`— Seeding forms...`)
 

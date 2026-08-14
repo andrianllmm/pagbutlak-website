@@ -10,7 +10,8 @@ import * as migration_20260810_184715_add_multimedia_collection from './20260810
 import * as migration_20260811_064548_restructure_multimedia_links from './20260811_064548_restructure_multimedia_links'
 import * as migration_20260811_072800_add_related_multimedia from './20260811_072800_add_related_multimedia'
 import * as migration_20260811_074014_add_multimedia_categories from './20260811_074014_add_multimedia_categories'
-import * as migration_20260810_194922_add_search_section_field from './20260810_194922_add_search_section_field';
+import * as migration_20260810_194922_add_search_section_field from './20260810_194922_add_search_section_field'
+import * as migration_20260812_173450_add_issues_collection from './20260812_173450_add_issues_collection'
 
 export const migrations = [
   {
@@ -56,7 +57,7 @@ export const migrations = [
   {
     up: migration_20260810_194922_add_search_section_field.up,
     down: migration_20260810_194922_add_search_section_field.down,
-    name: '20260810_194922_add_search_section_field'
+    name: '20260810_194922_add_search_section_field',
   },
   {
     up: migration_20260810_184715_add_multimedia_collection.up,
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20260811_074014_add_multimedia_categories.up,
     down: migration_20260811_074014_add_multimedia_categories.down,
     name: '20260811_074014_add_multimedia_categories',
+  },
+  {
+    up: migration_20260812_173450_add_issues_collection.up,
+    down: migration_20260812_173450_add_issues_collection.down,
+    name: '20260812_173450_add_issues_collection',
   },
 ]

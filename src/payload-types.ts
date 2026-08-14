@@ -73,6 +73,7 @@ export interface Config {
     media: Media;
     categories: Category;
     multimedia: Multimedia;
+    issues: Issue;
     users: User;
     redirects: Redirect;
     forms: Form;
@@ -97,6 +98,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     multimedia: MultimediaSelect<false> | MultimediaSelect<true>;
+    issues: IssuesSelect<false> | IssuesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -815,6 +817,23 @@ export interface Multimedia {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "issues".
+ */
+export interface Issue {
+  id: number;
+  title: string;
+  volume: number;
+  issueNumber: number;
+  coverImage: number | Media;
+  pdf: number | Media;
+  description?: string | null;
+  publishedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -1056,6 +1075,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'multimedia';
         value: number | Multimedia;
+      } | null)
+    | ({
+        relationTo: 'issues';
+        value: number | Issue;
       } | null)
     | ({
         relationTo: 'users';
@@ -1443,6 +1466,22 @@ export interface MultimediaSelect<T extends boolean = true> {
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "issues_select".
+ */
+export interface IssuesSelect<T extends boolean = true> {
+  title?: T;
+  volume?: T;
+  issueNumber?: T;
+  coverImage?: T;
+  pdf?: T;
+  description?: T;
+  publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
@@ -1914,6 +1953,10 @@ export interface TaskSchedulePublish {
       | ({
           relationTo: 'multimedia';
           value: number | Multimedia;
+        } | null)
+      | ({
+          relationTo: 'issues';
+          value: number | Issue;
         } | null);
     global?: string | null;
     user?: (number | null) | User;
