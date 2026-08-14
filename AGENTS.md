@@ -8,6 +8,8 @@ Pagbutlak Website is a news publishing platform for UPV Pagbutlak, the official 
 
 Content sections: News, Features, Opinion, Kultura. There's also a Multimedia section for video content (YouTube, Facebook, TikTok).
 
+The CMS has custom RBAC with three roles (`admin`/`editor`/`writer` on `Users.role`) enforcing a draft -> review -> publish workflow; see [Access Control (RBAC)](#access-control-rbac).
+
 ## Project Structure
 
 - `src/app/(frontend)/` - Public-facing pages (articles, authors, search, sections)
@@ -20,10 +22,10 @@ Content sections: News, Features, Opinion, Kultura. There's also a Multimedia se
 - `src/blocks/` - CMS block components for rich text
 - `src/collections/` - Payload collection configs
 - `src/globals/` - Payload global configs
-- `src/access/` - Reusable access control functions
+- `src/access/` - Reusable access control functions, including RBAC helpers (`isAdmin`, `isAdminOrEditor`, `isAdminOrEditorOrOwner`)
 - `src/fields/` - Shared Payload field definitions (defaultLexical, link, linkGroup)
 - `src/plugins/` - Payload plugin registration
-- `src/hooks/` - Payload hooks (populatePublishedAt, revalidateRedirects)
+- `src/hooks/` - Payload hooks (populatePublishedAt, revalidateRedirects, RBAC enforcement hooks)
 - `src/components/` - React components (including shadcn/ui in `components/ui/`)
 - `src/heros/` - Hero section variants (HighImpact, MediumImpact, LowImpact)
 - `src/migrations/` - Database migration files + index
@@ -138,7 +140,14 @@ pnpm generate:importmap
 - Seeding is destructive: it clears seeded collections before repopulating them. Never run it against a database containing content that must be preserved.
 - The CLI (`pnpm seed`) uses the Local API directly and requires an existing user in the `users` collection.
 - Any `payload.create`, `update`, or `updateGlobal` call added to `seed()` must pass `context: { disableRevalidate: true }` to prevent Next.js revalidation hooks from running outside a request context.
-- When seeding an S3-backed database, ensure the `S3_*` environment variables are available to the environment running the seed command; otherwise media files may be written to local disk instead of S3.## Code Conventions
+- When seeding an S3-backed database, ensure the `S3_*` environment variables are available to the environment running the seed command; otherwise media files may be written to local disk instead of S3.
+
+### Access Control (RBAC)
+
+- Three roles on `Users.role` (`admin`/`editor`/`writer`, `saveToJWT: true`). Writers can create/edit their own drafts but cannot publish, unpublish, or schedule-publish - editors/admins can. Ownership is tracked via a `createdBy` field (set by `setCreatedBy` hook) on Articles/Issues/Multimedia/Pages.
+- Since `_status` is an implicit field (from `versions.drafts`), publish/unpublish gating is enforced via `beforeChange` hooks (`preventUnauthorizedPublish`, `preventUnauthorizedSchedulePublish`), not field-level access.
+- `jobs.runHooks: true` in `payload.config.ts` is required for `preventUnauthorizedSchedulePublish` to run - Payload's job queue skips collection hooks by default.
+- When adding new roles/permissions or new collections that need ownership scoping, follow the existing pattern in `src/access/` and `src/hooks/` rather than introducing a new mechanism.
 
 ## Code Conventions
 
