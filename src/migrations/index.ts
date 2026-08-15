@@ -14,6 +14,7 @@ import * as migration_20260811_074014_add_multimedia_categories from './20260811
 import * as migration_20260812_173450_add_issues_collection from './20260812_173450_add_issues_collection'
 import * as migration_20260814_192113_add_user_roles_and_ownership from './20260814_192113_add_user_roles_and_ownership'
 import * as migration_20260815_082758_add_invitations_collection from './20260815_082758_add_invitations_collection'
+import * as migration_20260815_181223_add_centered_fields_and_footer_tiktok from './20260815_181223_add_centered_fields_and_footer_tiktok'
 
 export const migrations = [
   {
@@ -95,5 +96,10 @@ export const migrations = [
     up: migration_20260815_082758_add_invitations_collection.up,
     down: migration_20260815_082758_add_invitations_collection.down,
     name: '20260815_082758_add_invitations_collection',
+  },
+  {
+    up: migration_20260815_181223_add_centered_fields_and_footer_tiktok.up,
+    down: migration_20260815_181223_add_centered_fields_and_footer_tiktok.down,
+    name: '20260815_181223_add_centered_fields_and_footer_tiktok',
   },
 ]
