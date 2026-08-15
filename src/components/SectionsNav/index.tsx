@@ -1,3 +1,4 @@
+import { Dice5 } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
@@ -9,7 +10,15 @@ const SECTIONS_NAV_ITEMS = [
   { label: 'Sports', href: '/sports' },
   { label: 'Multimedia', href: '/multimedia' },
   { label: 'Issues', href: '/issues' },
-  { label: 'Games', href: '/games' },
+  {
+    label: (
+      <span className="inline-flex items-center gap-1">
+        <Dice5 className="size-4" />
+        Games
+      </span>
+    ),
+    href: '/games',
+  },
 ]
 
 export const SectionsNav: React.FC = () => {
