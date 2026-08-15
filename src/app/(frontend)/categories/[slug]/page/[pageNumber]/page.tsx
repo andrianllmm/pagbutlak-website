@@ -6,6 +6,8 @@ import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
@@ -143,9 +145,21 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '', pageNumber } = await paramsPromise
   const category = await queryCategoryBySlug({ slug })
 
+  if (!category) {
+    return { title: 'Pagbutlak Categories' }
+  }
+
+  const title = `${category.title} Page ${pageNumber || ''} | Pagbutlak`
+  const description = `Articles and multimedia from Pagbutlak in the ${category.title} category.`
+
   return {
-    title: category
-      ? `${category.title} Page ${pageNumber || ''} | Pagbutlak`
-      : 'Pagbutlak Categories',
+    description,
+    openGraph: mergeOpenGraph({
+      description,
+      title,
+      url: `/categories/${category.slug}/page/${pageNumber}`,
+    }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

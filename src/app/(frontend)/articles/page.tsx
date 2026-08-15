@@ -3,6 +3,8 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -60,7 +62,13 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const title = `Pagbutlak Articles`
+  const description = 'Browse all articles from Pagbutlak, UPV CAS.'
+
   return {
-    title: `Pagbutlak Articles`,
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: '/articles' }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

@@ -6,6 +6,8 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import type { Category } from '@/payload-types'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -99,7 +101,13 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const title = 'Pagbutlak Categories'
+  const description = 'Browse all categories on Pagbutlak, UPV CAS.'
+
   return {
-    title: 'Pagbutlak Categories',
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: '/categories' }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

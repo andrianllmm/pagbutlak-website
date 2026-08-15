@@ -1,6 +1,8 @@
 import type { Metadata } from 'next/types'
 
 import { IssuesArchive } from '@/components/IssuesArchive'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound, redirect } from 'next/navigation'
@@ -59,7 +61,13 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { volume } = await paramsPromise
+  const title = `Volume ${volume} | Pagbutlak`
+  const description = `Issues from Volume ${volume} of Pagbutlak, UPV CAS.`
+
   return {
-    title: `Volume ${volume} | Pagbutlak`,
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: `/issues/${volume}` }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }
