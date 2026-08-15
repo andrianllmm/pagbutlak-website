@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
 import React from 'react'
+import { Analytics } from '@vercel/analytics/next'
 
 import { AdminBar } from '@/components/AdminBar'
 import { JsonLd } from '@/components/JsonLd'
@@ -68,6 +69,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <Footer />
           </div>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )
