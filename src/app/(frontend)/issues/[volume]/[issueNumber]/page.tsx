@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { Media } from '@/components/Media'
 import { PDFViewer } from '@/components/PDFViewer'
 import { Button } from '@/components/ui/button'
-import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { formatHumanDate } from '@/utilities/formatHumanDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
@@ -74,7 +74,7 @@ export default async function IssuePage({ params: paramsPromise }: Args) {
 
             {item.publishedAt && (
               <div className="text-sm text-muted-foreground mb-4">
-                {formatReadableDate(item.publishedAt)}
+                {formatHumanDate(item.publishedAt)}
               </div>
             )}
 
