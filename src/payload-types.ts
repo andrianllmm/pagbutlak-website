@@ -452,7 +452,7 @@ export interface Author {
 export interface User {
   id: number;
   name?: string | null;
-  role: 'admin' | 'editor' | 'writer';
+  role?: ('admin' | 'editor' | 'writer') | null;
   /**
    * Link to a byline Author profile for credit purposes (optional).
    */
