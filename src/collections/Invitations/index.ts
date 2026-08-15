@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
-import { isAdmin } from '../access/isAdmin'
-import { generateInvitationToken } from '../hooks/generateInvitationToken'
+import { isAdmin } from '../../access/isAdmin'
+import { generateInvitationToken } from '../../hooks/generateInvitationToken'
 
 export const Invitations: CollectionConfig = {
   slug: 'invitations',
