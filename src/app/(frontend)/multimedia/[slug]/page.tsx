@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/JsonLd'
 import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs'
 import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
-import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { formatHumanDate } from '@/utilities/formatHumanDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
@@ -84,7 +84,7 @@ export default async function MultimediaPage({ params: paramsPromise }: Args) {
 
           {item.publishedAt && (
             <div className="text-sm text-muted-foreground mb-6">
-              {formatReadableDate(item.publishedAt)}
+              {formatHumanDate(item.publishedAt)}
             </div>
           )}
 
