@@ -34,6 +34,7 @@ export const Users: CollectionConfig = {
         update: isAdmin,
       },
       admin: {
+        condition: (_data, _siblingData, { user }) => Boolean(user),
         position: 'sidebar',
       },
       defaultValue: 'writer',
