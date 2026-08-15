@@ -9,6 +9,7 @@ import type { Header } from '@/payload-types'
 
 import { HeaderDate } from '@/components/HeaderDate'
 import { Wordmark } from '@/components/Brand/Wordmark'
+import { Logo } from '@/components/Brand/Logo'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -72,10 +73,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       {...(theme ? { 'data-theme': theme } : {})}
     >
       <div className="container">
-        <div className="py-4 grid grid-cols-2 md:grid-cols-3 items-center gap-4">
+        <div className="h-14 grid grid-cols-3 items-center gap-4">
           <HeaderDate />
 
-          <div className="hidden md:flex justify-self-center">
+          <div className="flex justify-self-center">
             <Link
               href="/"
               aria-label="Pagbutlak home"
@@ -86,7 +87,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
               tabIndex={showWordmark ? undefined : -1}
               aria-hidden={!showWordmark}
             >
-              <Wordmark className="h-[32px] text-foreground" />
+              <Logo className="h-[24px] text-foreground md:hidden" />
+              <Wordmark className="hidden h-[24px] text-foreground md:block" />
             </Link>
           </div>
 

@@ -37,6 +37,11 @@ export const Footer: GlobalConfig = {
           name: 'youtube',
           type: 'text',
         },
+        {
+          name: 'tiktok',
+          label: 'TikTok',
+          type: 'text',
+        },
       ],
     },
     {

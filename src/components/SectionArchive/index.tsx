@@ -1,7 +1,6 @@
 import type { ArticleSection } from '@/constants/articleSections'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -43,15 +42,6 @@ export async function SectionArchive({ section, sectionLabel, page = 1 }: Props)
         <div className="prose dark:prose-invert max-w-none">
           <h1>{sectionLabel}</h1>
         </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="articles"
-          currentPage={articles.page}
-          limit={12}
-          totalDocs={articles.totalDocs}
-        />
       </div>
 
       <CollectionArchive articles={articles.docs} />

@@ -1,10 +1,16 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { Check, Copy } from 'lucide-react'
+import { Check, Copy, Share2 } from 'lucide-react'
 import { SiFacebook, SiX } from '@icons-pack/react-simple-icons'
 
 import { Button } from '@/components/ui/button'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 type Props = {
   title: string
@@ -52,37 +58,38 @@ export const SocialMediaShare = ({ title, url }: Props) => {
   }, [copied])
 
   return (
-    <div className="flex flex-wrap gap-2">
-      <Button
-        aria-label={copied ? 'Link copied' : 'Copy link'}
-        onClick={handleCopy}
-        size="icon"
-        title={copied ? 'Link copied' : 'Copy link'}
-        type="button"
-        variant="outline"
-      >
-        {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-        <span className="sr-only">{copied ? 'Link copied' : 'Copy link'}</span>
-      </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button aria-label="Share" size="icon" title="Share" type="button" variant="ghost">
+          <Share2 className="h-4 w-4" />
+          <span className="sr-only">Share</span>
+        </Button>
+      </DropdownMenuTrigger>
 
-      {shareLinks.map((link) => {
-        const Icon = link.icon
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem
+          onSelect={(e) => {
+            e.preventDefault()
+            handleCopy()
+          }}
+        >
+          {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+          {copied ? 'Link copied' : 'Copy link'}
+        </DropdownMenuItem>
 
-        return (
-          <Button asChild key={link.label} size="icon" variant="outline">
-            <a
-              aria-label={link.label}
-              href={link.href}
-              rel="noreferrer"
-              target="_blank"
-              title={link.label}
-            >
-              <Icon className="h-4 w-4" />
-              <span className="sr-only">{link.label}</span>
-            </a>
-          </Button>
-        )
-      })}
-    </div>
+        {shareLinks.map((link) => {
+          const Icon = link.icon
+
+          return (
+            <DropdownMenuItem asChild key={link.label}>
+              <a href={link.href} rel="noreferrer" target="_blank">
+                <Icon className="h-4 w-4" />
+                {link.label}
+              </a>
+            </DropdownMenuItem>
+          )
+        })}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
@@ -42,15 +41,6 @@ export default async function Page({ params: paramsPromise }: Args) {
         <div className="prose dark:prose-invert max-w-none">
           <h1>Articles</h1>
         </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="articles"
-          currentPage={articles.page}
-          limit={12}
-          totalDocs={articles.totalDocs}
-        />
       </div>
 
       <CollectionArchive articles={articles.docs} />

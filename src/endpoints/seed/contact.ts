@@ -15,11 +15,12 @@ export const contact: (args: ContactArgs) => RequiredDataFromCollectionSlug<'pag
     slug: 'contact',
     _status: 'published',
     title: 'Contact',
-    hero: simpleHero('Contact Us'),
+    hero: { ...simpleHero('Contact Us'), centered: true },
     layout: [
       {
         blockName: 'Content Block',
         blockType: 'content',
+        centered: true,
         columns: [
           {
             size: 'full',

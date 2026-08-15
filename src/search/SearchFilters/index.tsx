@@ -1,12 +1,21 @@
 'use client'
 
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Combobox } from '@/components/ui/combobox'
 import { MultiSelectCombobox } from '@/components/ui/multiSelectCombobox'
 import { DatePickerWithRange } from '@/components/ui/datePickerRange'
-import { Label } from '@/components/ui/label'
+import { Field, FieldLabel } from '@/components/ui/field'
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
 import { format } from 'date-fns'
-import { ListFilter } from 'lucide-react'
+import { ListFilter, RotateCcw } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import { type DateRange } from 'react-day-picker'
@@ -47,7 +56,8 @@ export function SearchFilters({ sections, authors, categories, children }: Searc
   const readingTime = searchParams.get('readingTime') ?? ANY_VALUE
   const selectedCategories = searchParams.get('category')?.split(',').filter(Boolean) ?? []
 
-  const hasActiveFilters = FILTER_PARAM_KEYS.some((key) => searchParams.get(key))
+  const activeFilterCount = FILTER_PARAM_KEYS.filter((key) => searchParams.get(key)).length
+  const hasActiveFilters = activeFilterCount > 0
 
   const dateRange: DateRange | undefined =
     from || to
@@ -105,85 +115,105 @@ export function SearchFilters({ sections, authors, categories, children }: Searc
   }
 
   return (
-    <div>
-      <div className="flex items-center gap-2">
-        <div className="flex-1">{children}</div>
-        <Button variant="outline" onClick={() => setIsOpen((value) => !value)}>
-          <ListFilter className="h-4 w-4 mr-2" />
-          Advanced Filters
-        </Button>
-      </div>
+    <div className="flex items-center gap-2">
+      <div className="flex-1">{children}</div>
 
-      {isOpen && (
-        <div className="mt-4 grid grid-cols-2 gap-6 text-left md:grid-cols-4">
-          <div className="grid gap-1.5 pl-2">
-            <Label htmlFor="section-search">Section</Label>
-            <Combobox
-              id="section-search"
-              options={sectionOptions}
-              value={section}
-              onChange={(value) => updateParam('section', value)}
-              placeholder="Any"
-              showSearch={false}
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid gap-1.5">
-            <Label htmlFor="author-search">Author</Label>
-            <Combobox
-              id="author-search"
-              options={authorOptions}
-              value={author}
-              onChange={(value) => updateParam('author', value)}
-              placeholder="Any"
-              searchPlaceholder="Search authors..."
-              emptyText="No authors found."
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid gap-1.5">
-            <Label htmlFor="category-search">Category</Label>
-            <MultiSelectCombobox
-              id="category-search"
-              options={categories}
-              values={selectedCategories}
-              onChange={handleCategoriesChange}
-              placeholder="Any"
-              searchPlaceholder="Search categories..."
-              emptyText="No categories found."
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid gap-1.5">
-            <Label htmlFor="reading-time-search">Reading Time</Label>
-            <Combobox
-              id="reading-time-search"
-              options={READING_TIME_OPTIONS}
-              value={readingTime}
-              onChange={(value) => updateParam('readingTime', value)}
-              placeholder="Any"
-              showSearch={false}
-              className="w-full"
-            />
-          </div>
-
-          <div className="grid gap-1.5 md:col-span-2">
-            <DatePickerWithRange value={dateRange} onChange={handleDateRangeChange} />
-          </div>
-
-          <Button
-            variant="ghost"
-            onClick={resetFilters}
-            disabled={!hasActiveFilters}
-            className="md:col-span-5 md:w-fit"
-          >
-            Reset Filters
+      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+        <SheetTrigger asChild>
+          <Button variant="outline">
+            <ListFilter className="h-4 w-4 sm:mr-1" />
+            <span className="hidden sm:inline">Filters</span>
+            {hasActiveFilters && (
+              <Badge variant="outline" className="ml-1">
+                {activeFilterCount}
+              </Badge>
+            )}
           </Button>
-        </div>
-      )}
+        </SheetTrigger>
+
+        <SheetContent className="flex h-full w-full flex-col gap-0 p-6 sm:max-w-sm">
+          <SheetHeader className="mb-6">
+            <SheetTitle>Filters</SheetTitle>
+          </SheetHeader>
+
+          <div className="h-full flex flex-col gap-4">
+            <Field className="gap-1">
+              <FieldLabel htmlFor="section-search">Section</FieldLabel>
+              <Combobox
+                id="section-search"
+                options={sectionOptions}
+                value={section}
+                onChange={(value) => updateParam('section', value)}
+                placeholder="Any"
+                showSearch={false}
+                className="w-full"
+              />
+            </Field>
+
+            <Field className="gap-1">
+              <FieldLabel htmlFor="author-search">Author</FieldLabel>
+              <Combobox
+                id="author-search"
+                options={authorOptions}
+                value={author}
+                onChange={(value) => updateParam('author', value)}
+                placeholder="Any"
+                searchPlaceholder="Search authors..."
+                emptyText="No authors found."
+                className="w-full"
+              />
+            </Field>
+
+            <Field className="gap-1">
+              <FieldLabel htmlFor="category-search">Category</FieldLabel>
+              <MultiSelectCombobox
+                id="category-search"
+                options={categories}
+                values={selectedCategories}
+                onChange={handleCategoriesChange}
+                placeholder="Any"
+                searchPlaceholder="Search categories..."
+                emptyText="No categories found."
+                className="w-full"
+              />
+            </Field>
+
+            <Field className="gap-1">
+              <FieldLabel htmlFor="reading-time-search">Reading Time</FieldLabel>
+              <Combobox
+                id="reading-time-search"
+                options={READING_TIME_OPTIONS}
+                value={readingTime}
+                onChange={(value) => updateParam('readingTime', value)}
+                placeholder="Any"
+                showSearch={false}
+                className="w-full"
+              />
+            </Field>
+
+            <Field className="gap-1">
+              <FieldLabel htmlFor="date-range-search">Published Date</FieldLabel>
+              <DatePickerWithRange
+                id="date-range-search"
+                value={dateRange}
+                onChange={handleDateRangeChange}
+              />
+            </Field>
+          </div>
+
+          <SheetFooter>
+            <Button
+              variant="ghost"
+              onClick={resetFilters}
+              disabled={!hasActiveFilters}
+              className="w-fit"
+            >
+              <RotateCcw className="h-4 w-4 mr-2" />
+              Reset Filters
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   )
 }

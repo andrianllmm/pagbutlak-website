@@ -6,6 +6,7 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { Badge } from '../../ui/badge'
+import { CardMeta } from '@/components/CardMeta'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { formatReadingTime } from '@/utilities/readingTime'
@@ -121,14 +122,14 @@ export const ArticleCard: React.FC<{
           </div>
         )}
 
-        <div className="text-xs text-muted-foreground flex flex-wrap gap-3 my-2">
-          {/* Author */}
-          {authorLabel && <div className="font-medium">{authorLabel}</div>}
-          {/* Date */}
-          {publishedAt && <div>{formatReadableDate(publishedAt)}</div>}
-          {/* Reading time */}
-          {readingTimeLabel && <div>{readingTimeLabel}</div>}
-        </div>
+        <CardMeta
+          className="text-xs text-muted-foreground my-2"
+          items={[
+            authorLabel && <span className="font-medium">{authorLabel}</span>,
+            publishedAt && formatReadableDate(publishedAt),
+            readingTimeLabel,
+          ]}
+        />
 
         {/* Description */}
         {sanitizedDescription && (

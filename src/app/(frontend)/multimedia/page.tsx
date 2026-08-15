@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 
 import { MultimediaArchive } from '@/components/MultimediaArchive'
-import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
@@ -40,15 +39,6 @@ export default async function Page() {
         <div className="prose dark:prose-invert max-w-none">
           <h1>Multimedia</h1>
         </div>
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collectionLabels={{ plural: 'Videos', singular: 'Video' }}
-          currentPage={multimedia.page}
-          limit={12}
-          totalDocs={multimedia.totalDocs}
-        />
       </div>
 
       <MultimediaArchive items={multimedia.docs} />

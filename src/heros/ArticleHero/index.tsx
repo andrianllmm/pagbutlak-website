@@ -1,8 +1,7 @@
 import React from 'react'
 import type { Article } from '@/payload-types'
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
-import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { formatHumanDate } from '@/utilities/formatHumanDate'
 import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { formatReadingTime } from '@/utilities/readingTime'
 import { SocialMediaShare } from '@/components/SocialMediaShare'
@@ -11,12 +10,10 @@ import { getServerSideURL } from '@/utilities/getURL'
 export const ArticleHero: React.FC<{
   article: Article
 }> = ({ article }) => {
-  const { categories, heroImage, authors, publishedAt, slug, updatedAt, title } = article
+  const { categories, heroImage, publishedAt, slug, updatedAt, title } = article
 
-  const hasAuthors = authors && authors.length > 0 && formatAuthors(authors) !== ''
-
-  const publishedDate = publishedAt ? formatReadableDate(publishedAt) : null
-  const updatedDate = updatedAt ? formatReadableDate(updatedAt) : null
+  const publishedDate = publishedAt ? formatHumanDate(publishedAt) : null
+  const updatedDate = updatedAt ? formatHumanDate(updatedAt) : null
   const readingTimeLabel = formatReadingTime(article.readingTimeMinutes)
   const showUpdated = updatedDate && updatedDate !== publishedDate
   const shareURL = `${getServerSideURL()}/articles/${slug}`
@@ -40,25 +37,25 @@ export const ArticleHero: React.FC<{
       </h1>
 
       <div className="flex flex-col gap-2">
-        {/* Author */}
-        {hasAuthors && (
-          <p className="text-sm font-medium text-foreground">By {formatAuthors(authors)}</p>
-        )}
-
-        {/* Dates */}
-        {(publishedDate || readingTimeLabel || showUpdated) && (
+        {/* Date */}
+        {(publishedDate || showUpdated) && (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-0.5 text-sm text-muted-foreground">
             {publishedDate && <time dateTime={publishedAt!}>{publishedDate}</time>}
-            {readingTimeLabel && <div>{readingTimeLabel}</div>}
             {showUpdated && (
-              <time dateTime={updatedAt} className="text-muted-foreground/70">
+              <time dateTime={updatedAt} className="text-muted-foreground/50">
                 Updated {updatedDate}
               </time>
             )}
           </div>
         )}
 
-        <SocialMediaShare title={title} url={shareURL} />
+        {/* Reading time + share */}
+        <div className="flex items-center gap-4">
+          {readingTimeLabel && (
+            <div className="text-sm text-muted-foreground">{readingTimeLabel}</div>
+          )}
+          <SocialMediaShare title={title} url={shareURL} />
+        </div>
       </div>
 
       {/* Hero image */}

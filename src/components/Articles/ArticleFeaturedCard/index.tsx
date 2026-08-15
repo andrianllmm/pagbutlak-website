@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Media } from '@/components/Media'
+import { CardMeta } from '@/components/CardMeta'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { formatReadingTime } from '@/utilities/readingTime'
@@ -46,11 +47,14 @@ export const ArticleFeaturedCard: React.FC<{
           </div>
         )}
 
-        <div className="text-sm text-muted-foreground flex flex-wrap gap-3 my-3">
-          {authorLabel && <div className="font-medium">{authorLabel}</div>}
-          {publishedAt && <div>{formatReadableDate(publishedAt)}</div>}
-          {readingTimeLabel && <div>{readingTimeLabel}</div>}
-        </div>
+        <CardMeta
+          className="text-sm text-muted-foreground my-3"
+          items={[
+            authorLabel && <span className="font-medium">{authorLabel}</span>,
+            publishedAt && formatReadableDate(publishedAt),
+            readingTimeLabel,
+          ]}
+        />
 
         {sanitizedDescription && (
           <div className="line-clamp-4">

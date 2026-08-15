@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import React from 'react'
 
+import { CardMeta } from '@/components/CardMeta'
 import { Media } from '@/components/Media'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { cn } from '@/utilities/ui'
@@ -47,12 +48,13 @@ export const IssueCard: React.FC<{
           </h3>
         </div>
 
-        <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
-          <span>
-            Vol. {volume}, No. {issueNumber}
-          </span>
-          {publishedAt && <div>{formatReadableDate(publishedAt)}</div>}
-        </div>
+        <CardMeta
+          className="text-xs text-muted-foreground"
+          items={[
+            `Vol. ${volume}, No. ${issueNumber}`,
+            publishedAt && formatReadableDate(publishedAt),
+          ]}
+        />
       </div>
     </article>
   )

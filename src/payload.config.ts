@@ -46,6 +46,19 @@ export default buildConfig({
       titleSuffix: ' | Pagbutlak CMS',
       description:
         'Content management system for UPV Pagbutlak, the official student and community publication of UP Visayas - College of Arts and Sciences.',
+      icons: [
+        {
+          type: 'image/x-icon',
+          rel: 'icon',
+          url: '/favicon.ico',
+        },
+        {
+          type: 'image/png',
+          rel: 'apple-touch-icon',
+          sizes: '180x180',
+          url: '/apple-icon.png',
+        },
+      ],
     },
     user: Users.slug,
     livePreview: {

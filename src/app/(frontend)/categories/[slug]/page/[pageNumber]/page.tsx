@@ -4,7 +4,6 @@ import React from 'react'
 
 import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
@@ -76,15 +75,6 @@ export default async function Page({ params: paramsPromise }: Args) {
             ))}
           </ul>
         )}
-      </div>
-
-      <div className="container mb-8">
-        <PageRange
-          collection="articles"
-          currentPage={articles.page}
-          limit={ARTICLE_LIMIT}
-          totalDocs={articles.totalDocs}
-        />
       </div>
 
       <CollectionArchive articles={articles.docs} />

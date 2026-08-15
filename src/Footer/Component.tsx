@@ -1,4 +1,4 @@
-import { SiFacebook, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
+import { SiFacebook, SiInstagram, SiTiktok, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
@@ -20,6 +20,7 @@ export async function Footer() {
     { href: socialLinks?.x, label: 'X', icon: SiX },
     { href: socialLinks?.instagram, label: 'Instagram', icon: SiInstagram },
     { href: socialLinks?.youtube, label: 'YouTube', icon: SiYoutube },
+    { href: socialLinks?.tiktok, label: 'TikTok', icon: SiTiktok },
   ].filter(
     (item): item is { href: string; label: string; icon: typeof SiFacebook } =>
       typeof item.href === 'string' && item.href.length > 0,
@@ -77,8 +78,9 @@ export async function Footer() {
       <div className="border-t border-border">
         <div className="container grid grid-cols-1 items-center gap-4 py-6 md:grid-cols-3">
           <div className="hidden md:block" />
-          <p className="text-center text-sm text-muted-foreground">
-            &copy; {year} UP Visayas Pagbutlak. All rights reserved.
+          <p className="text-center text-xs text-muted-foreground">
+            <span className="whitespace-nowrap">&copy; {year} UPV Pagbutlak.</span>{' '}
+            <span className="whitespace-nowrap">All rights reserved.</span>
           </p>
           <div className="justify-self-center md:justify-self-end">
             <ThemeSelector />
