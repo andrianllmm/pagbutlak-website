@@ -18,11 +18,11 @@ export const HeaderDate: React.FC = () => {
   })
 
   return (
-    <div className="flex items-center gap-2 text-foreground">
-      <CalendarIcon className="size-5 shrink-0" />
+    <div className="flex items-center gap-1.5 text-foreground">
+      <CalendarIcon className="size-4 shrink-0" />
       <div className="leading-tight">
-        <div className="text-sm font-semibold">{day}</div>
-        <div className="text-xs text-muted-foreground">{fullDate}</div>
+        <div className="text-xs font-semibold">{day}</div>
+        <div className="text-[11px] text-muted-foreground">{fullDate}</div>
       </div>
     </div>
   )
