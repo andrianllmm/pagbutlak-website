@@ -5,9 +5,9 @@ import { APIError } from 'payload'
 import { getPasswordStrengthError } from '../utilities/passwordStrength'
 
 export const enforcePasswordStrength: CollectionBeforeValidateHook = ({ data, originalDoc }) => {
-  const password = data?.password as string | undefined
+  const password = data?.password
 
-  if (!password) {
+  if (!password || typeof password !== 'string') {
     return data
   }
 
