@@ -77,8 +77,9 @@ export async function Footer() {
       <div className="border-t border-border">
         <div className="container grid grid-cols-1 items-center gap-4 py-6 md:grid-cols-3">
           <div className="hidden md:block" />
-          <p className="text-center text-sm text-muted-foreground">
-            &copy; {year} UP Visayas Pagbutlak. All rights reserved.
+          <p className="text-center text-xs text-muted-foreground">
+            <span className="whitespace-nowrap">&copy; {year} UPV Pagbutlak.</span>{' '}
+            <span className="whitespace-nowrap">All rights reserved.</span>
           </p>
           <div className="justify-self-center md:justify-self-end">
             <ThemeSelector />
