@@ -5,6 +5,8 @@ import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs
 import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -107,8 +109,28 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const decodedSlug = decodeURIComponent(slug)
   const item = await queryMultimediaBySlug({ slug: decodedSlug })
 
+  if (!item) {
+    return { title: 'Multimedia | Pagbutlak' }
+  }
+
+  const title = `${item.title} | Pagbutlak`
+  const description = item.caption ?? undefined
+  const thumbnailUrl =
+    item.thumbnail && typeof item.thumbnail === 'object' && item.thumbnail.url
+      ? getMediaUrl(item.thumbnail.url)
+      : item.autoThumbnailUrl
+        ? getMediaUrl(item.autoThumbnailUrl)
+        : undefined
+
   return {
-    title: item ? `${item.title} | Pagbutlak` : 'Multimedia | Pagbutlak',
+    description,
+    openGraph: mergeOpenGraph({
+      description: description || '',
+      images: thumbnailUrl ? [{ url: thumbnailUrl }] : undefined,
+      title,
+      url: `/multimedia/${item.slug}`,
+    }),
+    title,
   }
 }
 
@@ -129,6 +151,8 @@ const queryMultimediaBySlug = cache(async ({ slug }: { slug: string }) => {
       caption: true,
       publishedAt: true,
       relatedMultimedia: true,
+      thumbnail: true,
+      autoThumbnailUrl: true,
     },
     where: {
       slug: {

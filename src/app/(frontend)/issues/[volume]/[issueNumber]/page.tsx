@@ -6,6 +6,7 @@ import { PDFViewer } from '@/components/PDFViewer'
 import { Button } from '@/components/ui/button'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -100,8 +101,26 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { volume, issueNumber } = await paramsPromise
   const item = await queryIssueByVolumeAndNumber({ volume, issueNumber })
 
+  if (!item) {
+    return { title: 'Issues | Pagbutlak' }
+  }
+
+  const title = `${item.title} | Pagbutlak`
+  const description = item.description ?? undefined
+  const coverImageUrl =
+    item.coverImage && typeof item.coverImage === 'object' && item.coverImage.url
+      ? getMediaUrl(item.coverImage.url)
+      : undefined
+
   return {
-    title: item ? `${item.title} | Pagbutlak` : 'Issues | Pagbutlak',
+    description,
+    openGraph: mergeOpenGraph({
+      description: description || '',
+      images: coverImageUrl ? [{ url: coverImageUrl }] : undefined,
+      title,
+      url: `/issues/${item.volume}/${item.issueNumber}`,
+    }),
+    title,
   }
 }
 

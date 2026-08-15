@@ -12,6 +12,8 @@ import { SiFacebook, SiInstagram, SiX } from '@icons-pack/react-simple-icons'
 
 import { Avatar } from '@/components/Avatar'
 import { ArticleCard } from '@/components/Articles/ArticleCard'
+import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -160,9 +162,26 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const author = await queryAuthorBySlug({ slug: decodedSlug })
 
+  if (!author) {
+    return { title: 'Pagbutlak' }
+  }
+
+  const title = `${author.name} | Pagbutlak`
+  const description = author.bio ?? undefined
+  const avatarUrl =
+    author.avatar && typeof author.avatar === 'object' && author.avatar.url
+      ? `${getServerSideURL()}${author.avatar.url}`
+      : undefined
+
   return {
-    title: author?.name,
-    description: author?.bio ?? undefined,
+    description,
+    openGraph: mergeOpenGraph({
+      description: description || '',
+      images: avatarUrl ? [{ url: avatarUrl }] : undefined,
+      title,
+      url: `/authors/${author.slug}`,
+    }),
+    title,
   }
 }
 
