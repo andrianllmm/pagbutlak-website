@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import type { Article, Config, Media, Page } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
+import { mergeTwitter } from './mergeTwitter'
 import { getServerSideURL } from './getURL'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
@@ -43,5 +44,10 @@ export const generateMeta = async (args: {
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
     }),
     title,
+    twitter: mergeTwitter({
+      description: doc?.meta?.description || '',
+      images: ogImage ? [ogImage] : undefined,
+      title,
+    }),
   }
 }

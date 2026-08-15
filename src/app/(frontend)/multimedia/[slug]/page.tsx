@@ -7,6 +7,7 @@ import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -131,6 +132,11 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       url: `/multimedia/${item.slug}`,
     }),
     title,
+    twitter: mergeTwitter({
+      description: description || '',
+      images: thumbnailUrl ? [thumbnailUrl] : undefined,
+      title,
+    }),
   }
 }
 

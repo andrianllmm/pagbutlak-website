@@ -14,6 +14,7 @@ import { IssueCard } from '@/components/Issues/IssueCard'
 import { MultimediaSectionRow } from '@/components/MultimediaSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import type { CardDoc } from '@/components/Articles/ArticleCard'
 
 const HOME_DESCRIPTION =
@@ -196,5 +197,9 @@ export async function generateMetadata(): Promise<Metadata> {
       url: '/',
     }),
     title,
+    twitter: mergeTwitter({
+      description: HOME_DESCRIPTION,
+      title,
+    }),
   }
 }

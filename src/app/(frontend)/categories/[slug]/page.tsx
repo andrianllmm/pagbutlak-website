@@ -8,6 +8,7 @@ import { MultimediaArchive } from '@/components/MultimediaArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
@@ -163,5 +164,9 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       url: `/categories/${category.slug}`,
     }),
     title,
+    twitter: mergeTwitter({
+      description,
+      title,
+    }),
   }
 }

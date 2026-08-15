@@ -14,6 +14,7 @@ import { Avatar } from '@/components/Avatar'
 import { ArticleCard } from '@/components/Articles/ArticleCard'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -182,6 +183,11 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       url: `/authors/${author.slug}`,
     }),
     title,
+    twitter: mergeTwitter({
+      description: description || '',
+      images: avatarUrl ? [avatarUrl] : undefined,
+      title,
+    }),
   }
 }
 

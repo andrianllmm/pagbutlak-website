@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -121,6 +122,11 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
       url: `/issues/${item.volume}/${item.issueNumber}`,
     }),
     title,
+    twitter: mergeTwitter({
+      description: description || '',
+      images: coverImageUrl ? [coverImageUrl] : undefined,
+      title,
+    }),
   }
 }
 
