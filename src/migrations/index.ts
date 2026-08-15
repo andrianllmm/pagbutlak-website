@@ -13,6 +13,7 @@ import * as migration_20260811_072800_add_related_multimedia from './20260811_07
 import * as migration_20260811_074014_add_multimedia_categories from './20260811_074014_add_multimedia_categories'
 import * as migration_20260812_173450_add_issues_collection from './20260812_173450_add_issues_collection'
 import * as migration_20260814_192113_add_user_roles_and_ownership from './20260814_192113_add_user_roles_and_ownership'
+import * as migration_20260815_082758_add_invitations_collection from './20260815_082758_add_invitations_collection'
 
 export const migrations = [
   {
@@ -89,5 +90,10 @@ export const migrations = [
     up: migration_20260814_192113_add_user_roles_and_ownership.up,
     down: migration_20260814_192113_add_user_roles_and_ownership.down,
     name: '20260814_192113_add_user_roles_and_ownership',
+  },
+  {
+    up: migration_20260815_082758_add_invitations_collection.up,
+    down: migration_20260815_082758_add_invitations_collection.down,
+    name: '20260815_082758_add_invitations_collection',
   },
 ]
