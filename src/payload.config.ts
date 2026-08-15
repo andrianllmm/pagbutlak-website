@@ -42,6 +42,11 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: ' | Pagbutlak CMS',
+      description:
+        'Content management system for UPV Pagbutlak, the official student and community publication of UP Visayas - College of Arts and Sciences.',
+    },
     user: Users.slug,
     livePreview: {
       breakpoints: [
