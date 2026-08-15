@@ -2,14 +2,16 @@ import { Dice5 } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
+import { PagbutlaxWordmark } from '@/components/Brand/PagbutlaxWordmark'
+
 const SECTIONS_NAV_ITEMS = [
   { label: 'News', href: '/news' },
   { label: 'Opinion', href: '/opinion' },
   { label: 'Features', href: '/features' },
   { label: 'Kultura', href: '/kultura' },
-  { label: 'Sports', href: '/sports' },
   { label: 'Multimedia', href: '/multimedia' },
   { label: 'Issues', href: '/issues' },
+  { label: <PagbutlaxWordmark className="text-base" interactive />, href: '/pagbutlax' },
   {
     label: (
       <span className="inline-flex items-center gap-1">
