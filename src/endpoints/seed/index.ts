@@ -146,7 +146,7 @@ export const seed = async ({
       data: {
         name: 'Demo Admin',
         email: 'demo-admin@example.com',
-        password: 'demo-password',
+        password: 'Pagbutlak-Demo-2026!',
         role: 'admin',
       },
     }),
@@ -155,7 +155,7 @@ export const seed = async ({
       data: {
         name: 'Demo Editor',
         email: 'demo-editor@example.com',
-        password: 'demo-password',
+        password: 'Pagbutlak-Demo-2026!',
         role: 'editor',
       },
     }),
@@ -164,7 +164,7 @@ export const seed = async ({
       data: {
         name: 'Demo Writer',
         email: 'demo-writer@example.com',
-        password: 'demo-password',
+        password: 'Pagbutlak-Demo-2026!',
         role: 'writer',
       },
     }),

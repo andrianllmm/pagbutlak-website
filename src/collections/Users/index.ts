@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { createOwnerScopedAccess } from '../../access/createOwnerScopedAccess'
 import { isAdmin } from '../../access/isAdmin'
+import { enforcePasswordStrength } from '../../hooks/enforcePasswordStrength'
 import { forceFirstUserAdmin } from '../../hooks/forceFirstUserAdmin'
 
 export const Users: CollectionConfig = {
@@ -15,7 +16,7 @@ export const Users: CollectionConfig = {
     update: createOwnerScopedAccess({ allowedRoles: ['admin'], ownerField: 'id' }),
   },
   hooks: {
-    beforeValidate: [forceFirstUserAdmin],
+    beforeValidate: [forceFirstUserAdmin, enforcePasswordStrength],
   },
   admin: {
     defaultColumns: ['name', 'email', 'role'],
