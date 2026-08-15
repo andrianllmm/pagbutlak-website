@@ -7,6 +7,7 @@ import type { User } from '@/payload-types'
 import { anyone } from './anyone'
 import { authenticated } from './authenticated'
 import { authenticatedOrPublished } from './authenticatedOrPublished'
+import { createOwnerScopedAccess } from './createOwnerScopedAccess'
 import { isAdmin } from './isAdmin'
 import { isAdminOrEditor } from './isAdminOrEditor'
 import { isAdminOrEditorOrOwner } from './isAdminOrEditorOrOwner'
@@ -86,6 +87,29 @@ describe('isAdminOrEditorOrOwner', () => {
   it('restricts a writer to their own documents', () => {
     expect(isAdminOrEditorOrOwner(withUser(asUser('writer', 42)))).toEqual({
       createdBy: { equals: 42 },
+    })
+  })
+})
+
+describe('createOwnerScopedAccess', () => {
+  it('denies when there is no user', () => {
+    const access = createOwnerScopedAccess({ allowedRoles: ['admin'], ownerField: 'id' })
+    expect(access(withUser(null))).toBe(false)
+  })
+
+  it('allows an allowed role full access', () => {
+    const access = createOwnerScopedAccess({
+      allowedRoles: ['admin', 'editor'],
+      ownerField: 'id',
+    })
+    expect(access(withUser(asUser('admin')))).toBe(true)
+    expect(access(withUser(asUser('editor')))).toBe(true)
+  })
+
+  it('scopes a disallowed role to the given owner field', () => {
+    const access = createOwnerScopedAccess({ allowedRoles: ['admin'], ownerField: 'id' })
+    expect(access(withUser(asUser('editor', 7)))).toEqual({
+      id: { equals: 7 },
     })
   })
 })

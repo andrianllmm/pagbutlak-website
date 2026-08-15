@@ -1,17 +1,6 @@
-import type { Access } from 'payload'
+import { createOwnerScopedAccess } from './createOwnerScopedAccess'
 
-export const isAdminOrEditorOrOwner: Access = ({ req: { user } }) => {
-  if (!user) {
-    return false
-  }
-
-  if (user.role === 'admin' || user.role === 'editor') {
-    return true
-  }
-
-  return {
-    createdBy: {
-      equals: user.id,
-    },
-  }
-}
+export const isAdminOrEditorOrOwner = createOwnerScopedAccess({
+  allowedRoles: ['admin', 'editor'],
+  ownerField: 'createdBy',
+})

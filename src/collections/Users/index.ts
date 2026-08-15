@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
+import { createOwnerScopedAccess } from '../../access/createOwnerScopedAccess'
 import { isAdmin } from '../../access/isAdmin'
-import { isAdminOrEditor } from '../../access/isAdminOrEditor'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -10,36 +10,8 @@ export const Users: CollectionConfig = {
     admin: authenticated,
     create: isAdmin,
     delete: isAdmin,
-    read: (args) => {
-      if (!args.req.user) {
-        return false
-      }
-
-      if (isAdminOrEditor(args)) {
-        return true
-      }
-
-      return {
-        id: {
-          equals: args.req.user.id,
-        },
-      }
-    },
-    update: (args) => {
-      if (!args.req.user) {
-        return false
-      }
-
-      if (isAdmin(args)) {
-        return true
-      }
-
-      return {
-        id: {
-          equals: args.req.user.id,
-        },
-      }
-    },
+    read: createOwnerScopedAccess({ allowedRoles: ['admin', 'editor'], ownerField: 'id' }),
+    update: createOwnerScopedAccess({ allowedRoles: ['admin'], ownerField: 'id' }),
   },
   admin: {
     defaultColumns: ['name', 'email', 'role'],
