@@ -50,6 +50,7 @@ export const Users: CollectionConfig = {
       name: 'author',
       type: 'relationship',
       admin: {
+        condition: (_data, _siblingData, { user }) => Boolean(user),
         description: 'Link to a byline Author profile for credit purposes (optional).',
         position: 'sidebar',
       },
