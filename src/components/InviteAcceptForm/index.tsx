@@ -2,7 +2,9 @@
 
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Button, FieldError, FieldLabel, TextInput } from '@payloadcms/ui'
+import { Button, FieldLabel, TextInput } from '@payloadcms/ui'
+
+import { FieldError } from '@/components/ui/field'
 
 const PasswordInput: React.FC<{
   id: string
@@ -81,7 +83,7 @@ export const InviteAcceptForm: React.FC<{ token: string }> = ({ token }) => {
           onChange={setConfirmPassword}
           value={confirmPassword}
         />
-        {error && <FieldError message={error} showError />}
+        {error && <FieldError>{error}</FieldError>}
         <div className="form-submit">
           <Button disabled={loading} size="large" type="submit">
             {loading ? 'Creating account…' : 'Create account'}
