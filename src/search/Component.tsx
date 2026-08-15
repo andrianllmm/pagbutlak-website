@@ -1,6 +1,7 @@
 'use client'
-import { Input } from '@/components/ui/input'
+import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { Label } from '@/components/ui/label'
+import { SearchIcon } from 'lucide-react'
 import React, { useState, useEffect } from 'react'
 import { useDebounce } from '@/utilities/useDebounce'
 import { useRouter, useSearchParams } from 'next/navigation'
@@ -33,13 +34,19 @@ export const Search: React.FC = () => {
         <Label htmlFor="search" className="sr-only">
           Search
         </Label>
-        <Input
-          id="search"
-          onChange={(event) => {
-            setValue(event.target.value)
-          }}
-          placeholder="Search"
-        />
+        <InputGroup className="h-10 border-border">
+          <InputGroupInput
+            id="search"
+            autoFocus
+            onChange={(event) => {
+              setValue(event.target.value)
+            }}
+            placeholder="Search"
+          />
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+        </InputGroup>
         <button type="submit" className="sr-only">
           submit
         </button>
