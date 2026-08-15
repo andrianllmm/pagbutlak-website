@@ -8,6 +8,8 @@ import { getPayload } from 'payload'
 import React from 'react'
 import { Search } from '@/search/Component'
 import { SearchFilters } from '@/search/SearchFilters'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import PageClient from './page.client'
 import { CardDoc } from '@/components/Articles/ArticleCard'
 
@@ -70,8 +72,8 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
     }
   }
 
-  if (from) {   
-    const fromDate = new Date(from)   
+  if (from) {
+    const fromDate = new Date(from)
     //Guardrail for non NaN inputs
     if (!Number.isNaN(fromDate.getTime())) {
       conditions.push({ publishedAt: { greater_than_equal: fromDate.toISOString() } })
@@ -147,7 +149,13 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 }
 
 export function generateMetadata(): Metadata {
+  const title = `Search | Pagbutlak`
+  const description = 'Search articles and multimedia from Pagbutlak, UPV CAS.'
+
   return {
-    title: `Pagbutlak Search`,
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: '/search' }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

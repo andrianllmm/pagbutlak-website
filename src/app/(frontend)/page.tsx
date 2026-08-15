@@ -13,7 +13,14 @@ import { HomeSectionRow } from '@/components/HomeSectionRow'
 import { IssueCard } from '@/components/Issues/IssueCard'
 import { MultimediaSectionRow } from '@/components/MultimediaSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
+import { JsonLd } from '@/components/JsonLd'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getWebSiteSchema } from '@/utilities/structuredData'
 import type { CardDoc } from '@/components/Articles/ArticleCard'
+
+const HOME_DESCRIPTION =
+  'UPV Pagbutlak is the official student and community publication of the University of the Philippines Visayas College of Arts and Sciences, covering News, Features, Opinion, and Kultura.'
 
 const ARTICLE_SELECT = {
   title: true,
@@ -112,6 +119,7 @@ export default async function Page() {
 
   return (
     <article className="pb-24">
+      <JsonLd data={getWebSiteSchema()} />
       <HomeMasthead />
       <SectionsNav />
 
@@ -182,7 +190,19 @@ export default async function Page() {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
+  const title = 'UP Visayas Pagbutlak'
+
   return {
-    title: 'UP Visayas Pagbutlak',
+    description: HOME_DESCRIPTION,
+    openGraph: mergeOpenGraph({
+      description: HOME_DESCRIPTION,
+      title,
+      url: '/',
+    }),
+    title,
+    twitter: mergeTwitter({
+      description: HOME_DESCRIPTION,
+      title,
+    }),
   }
 }

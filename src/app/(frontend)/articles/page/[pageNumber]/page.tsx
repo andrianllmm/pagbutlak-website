@@ -3,6 +3,8 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -64,8 +66,14 @@ export default async function Page({ params: paramsPromise }: Args) {
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
+  const title = `Articles Page ${pageNumber || ''} | Pagbutlak`
+  const description = 'Browse all articles from Pagbutlak, UPV CAS.'
+
   return {
-    title: `Pagbutlak Articles Page ${pageNumber || ''}`,
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: `/articles/page/${pageNumber}` }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }
 

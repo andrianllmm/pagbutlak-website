@@ -3,6 +3,8 @@ import type { Metadata } from 'next/types'
 import { MultimediaArchive } from '@/components/MultimediaArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import React from 'react'
@@ -65,7 +67,13 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const title = 'Multimedia | Pagbutlak'
+  const description = 'Browse multimedia content from Pagbutlak, UPV CAS.'
+
   return {
-    title: 'Multimedia | Pagbutlak',
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: '/multimedia' }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

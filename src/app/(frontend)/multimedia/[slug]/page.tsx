@@ -1,10 +1,15 @@
 import type { Metadata } from 'next'
 
 import { Link as LinkIcon } from 'lucide-react'
+import { JsonLd } from '@/components/JsonLd'
 import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs'
 import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getVideoObjectSchema } from '@/utilities/structuredData'
 import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -44,6 +49,7 @@ export default async function MultimediaPage({ params: paramsPromise }: Args) {
 
   return (
     <article className="pt-12 pb-16">
+      <JsonLd data={getVideoObjectSchema(item)} />
       <div className="max-w-[56rem] mx-auto px-4 md:px-6 lg:grid lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-8 lg:items-start">
         <MultimediaEmbedTabs
           className="mx-auto lg:sticky"
@@ -107,8 +113,33 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const decodedSlug = decodeURIComponent(slug)
   const item = await queryMultimediaBySlug({ slug: decodedSlug })
 
+  if (!item) {
+    return { title: 'Multimedia | Pagbutlak' }
+  }
+
+  const title = `${item.title} | Pagbutlak`
+  const description = item.caption ?? undefined
+  const thumbnailUrl =
+    item.thumbnail && typeof item.thumbnail === 'object' && item.thumbnail.url
+      ? getMediaUrl(item.thumbnail.url)
+      : item.autoThumbnailUrl
+        ? getMediaUrl(item.autoThumbnailUrl)
+        : undefined
+
   return {
-    title: item ? `${item.title} | Pagbutlak` : 'Multimedia | Pagbutlak',
+    description,
+    openGraph: mergeOpenGraph({
+      description: description || '',
+      images: thumbnailUrl ? [{ url: thumbnailUrl }] : undefined,
+      title,
+      url: `/multimedia/${item.slug}`,
+    }),
+    title,
+    twitter: mergeTwitter({
+      description: description || '',
+      images: thumbnailUrl ? [thumbnailUrl] : undefined,
+      title,
+    }),
   }
 }
 
@@ -129,6 +160,8 @@ const queryMultimediaBySlug = cache(async ({ slug }: { slug: string }) => {
       caption: true,
       publishedAt: true,
       relatedMultimedia: true,
+      thumbnail: true,
+      autoThumbnailUrl: true,
     },
     where: {
       slug: {

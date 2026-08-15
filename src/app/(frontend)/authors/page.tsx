@@ -4,6 +4,8 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { AuthorCard } from '@/components/Authors/AuthorCard'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
 
 export const dynamic = 'force-static'
 export const revalidate = 600
@@ -44,7 +46,13 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
+  const title = 'Authors | Pagbutlak'
+  const description = 'Meet the writers and editors of Pagbutlak, UPV CAS.'
+
   return {
-    title: 'Pagbutlak Authors',
+    description,
+    openGraph: mergeOpenGraph({ description, title, url: '/authors' }),
+    title,
+    twitter: mergeTwitter({ description, title }),
   }
 }

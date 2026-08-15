@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { JsonLd } from '@/components/JsonLd'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -12,6 +13,10 @@ import { SiFacebook, SiInstagram, SiX } from '@icons-pack/react-simple-icons'
 
 import { Avatar } from '@/components/Avatar'
 import { ArticleCard } from '@/components/Articles/ArticleCard'
+import { getServerSideURL } from '@/utilities/getURL'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getPersonSchema } from '@/utilities/structuredData'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -100,6 +105,7 @@ export default async function AuthorPage({ params: paramsPromise }: Args) {
 
   return (
     <div className="pt-12 pb-16">
+      <JsonLd data={getPersonSchema(author)} />
       <PayloadRedirects disableNotFound url={url} />
 
       {/* Author profile */}
@@ -160,9 +166,31 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const author = await queryAuthorBySlug({ slug: decodedSlug })
 
+  if (!author) {
+    return { title: 'Pagbutlak' }
+  }
+
+  const title = `${author.name} | Pagbutlak`
+  const description = author.bio ?? undefined
+  const avatarUrl =
+    author.avatar && typeof author.avatar === 'object' && author.avatar.url
+      ? `${getServerSideURL()}${author.avatar.url}`
+      : undefined
+
   return {
-    title: author?.name,
-    description: author?.bio ?? undefined,
+    description,
+    openGraph: mergeOpenGraph({
+      description: description || '',
+      images: avatarUrl ? [{ url: avatarUrl }] : undefined,
+      title,
+      url: `/authors/${author.slug}`,
+    }),
+    title,
+    twitter: mergeTwitter({
+      description: description || '',
+      images: avatarUrl ? [avatarUrl] : undefined,
+      title,
+    }),
   }
 }
 
