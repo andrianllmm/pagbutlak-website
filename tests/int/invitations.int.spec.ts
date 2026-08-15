@@ -1,18 +1,39 @@
 import { getPayload, Payload } from 'payload'
 import config from '@/payload.config'
 
-import { describe, it, beforeAll, afterEach, expect } from 'vitest'
+import { describe, it, beforeAll, afterAll, afterEach, expect } from 'vitest'
 
 import { acceptInvitation } from '@/endpoints/acceptInvitation'
 import { findInvitationByToken } from '@/utilities/findInvitationByToken'
 
 let payload: Payload
+let seededAdminId: number | string
 const createdUserEmails: string[] = []
 
 describe('Invitations', () => {
   beforeAll(async () => {
     payload = await getPayload({ config })
+
+    // Invitations can only be created by an admin, so an admin always exists
+    // by the time a real invitation is accepted; seed one here so the users
+    // collection isn't empty (which would make the invited user the "first"
+    // user and force it to admin).
+    const seededAdmin = await payload.create({
+      collection: 'users',
+      data: {
+        name: 'Seed Admin',
+        email: 'seed-admin@example.com',
+        password: 'a-real-password-123',
+        role: 'admin',
+      },
+      overrideAccess: true,
+    })
+    seededAdminId = seededAdmin.id
   }, 30000)
+
+  afterAll(async () => {
+    await payload.delete({ collection: 'users', id: seededAdminId, overrideAccess: true })
+  })
 
   afterEach(async () => {
     for (const email of createdUserEmails.splice(0)) {
