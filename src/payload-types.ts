@@ -1888,6 +1888,7 @@ export interface Footer {
     x?: string | null;
     instagram?: string | null;
     youtube?: string | null;
+    tiktok?: string | null;
   };
   navGroups?:
     | {
@@ -1954,6 +1955,7 @@ export interface FooterSelect<T extends boolean = true> {
         x?: T;
         instagram?: T;
         youtube?: T;
+        tiktok?: T;
       };
   navGroups?:
     | T

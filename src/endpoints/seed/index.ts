@@ -418,6 +418,7 @@ export const seed = async ({
           x: 'https://x.com/pagbutlakupv',
           instagram: 'https://instagram.com/pagbutlakupv',
           youtube: 'https://youtube.com/@pagbutlakupv',
+          tiktok: 'https://tiktok.com/@pagbutlakupv',
         },
         navGroups: [
           {
@@ -427,22 +428,16 @@ export const seed = async ({
               { link: { type: 'custom', label: 'Opinion', url: '/opinion' } },
               { link: { type: 'custom', label: 'Features', url: '/features' } },
               { link: { type: 'custom', label: 'Kultura', url: '/kultura' } },
+              { link: { type: 'custom', label: 'Multimedia', url: '/multimedia' } },
+              { link: { type: 'custom', label: 'Issues', url: '/issues' } },
             ],
           },
           {
-            title: 'Company',
+            title: 'Organization',
             navItems: [
               { link: { type: 'custom', label: 'About', url: '/about' } },
               { link: { type: 'custom', label: 'Contact', url: '/contact' } },
-              { link: { type: 'custom', label: 'Admin', url: '/admin' } },
-              {
-                link: {
-                  type: 'custom',
-                  label: 'Source Code',
-                  newTab: true,
-                  url: 'https://github.com/pagbutlakupv/website',
-                },
-              },
+              { link: { type: 'custom', label: 'Authors', url: '/authors' } },
             ],
           },
           {

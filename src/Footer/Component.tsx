@@ -1,4 +1,4 @@
-import { SiFacebook, SiInstagram, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
+import { SiFacebook, SiInstagram, SiTiktok, SiX, SiYoutube } from '@icons-pack/react-simple-icons'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
@@ -20,6 +20,7 @@ export async function Footer() {
     { href: socialLinks?.x, label: 'X', icon: SiX },
     { href: socialLinks?.instagram, label: 'Instagram', icon: SiInstagram },
     { href: socialLinks?.youtube, label: 'YouTube', icon: SiYoutube },
+    { href: socialLinks?.tiktok, label: 'TikTok', icon: SiTiktok },
   ].filter(
     (item): item is { href: string; label: string; icon: typeof SiFacebook } =>
       typeof item.href === 'string' && item.href.length > 0,
