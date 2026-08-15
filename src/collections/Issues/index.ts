@@ -4,14 +4,18 @@ import { APIError } from 'payload'
 
 import { authenticated } from '@/access/authenticated'
 import { authenticatedOrPublished } from '@/access/authenticatedOrPublished'
+import { isAdmin } from '@/access/isAdmin'
+import { isAdminOrEditorOrOwner } from '@/access/isAdminOrEditorOrOwner'
+import { setCreatedBy } from '@/hooks/setCreatedBy'
+import { preventUnauthorizedPublish } from '@/hooks/preventUnauthorizedPublish'
 
 export const Issues: CollectionConfig<'issues'> = {
   slug: 'issues',
   access: {
     create: authenticated,
-    delete: authenticated,
+    delete: isAdminOrEditorOrOwner,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: isAdminOrEditorOrOwner,
   },
   admin: {
     defaultColumns: ['title', 'volume', 'issueNumber', 'publishedAt', 'updatedAt'],
@@ -52,6 +56,19 @@ export const Issues: CollectionConfig<'issues'> = {
       type: 'textarea',
     },
     {
+      name: 'createdBy',
+      type: 'relationship',
+      access: {
+        update: isAdmin,
+      },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      hasMany: false,
+      relationTo: 'users',
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {
@@ -73,6 +90,7 @@ export const Issues: CollectionConfig<'issues'> = {
     },
   ],
   hooks: {
+    beforeChange: [setCreatedBy, preventUnauthorizedPublish],
     beforeValidate: [
       async ({ data, originalDoc, req }) => {
         const volume = data?.volume ?? originalDoc?.volume

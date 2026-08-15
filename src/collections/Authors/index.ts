@@ -1,6 +1,8 @@
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
+import { isAdminOrEditor } from '../../access/isAdminOrEditor'
+
 export const Authors: CollectionConfig<'authors'> = {
   slug: 'authors',
 
@@ -10,7 +12,10 @@ export const Authors: CollectionConfig<'authors'> = {
   },
 
   access: {
+    create: isAdminOrEditor,
+    delete: isAdminOrEditor,
     read: () => true,
+    update: isAdminOrEditor,
   },
 
   defaultPopulate: {

@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
+import { isAdmin } from '../../access/isAdmin'
+import { isAdminOrEditorOrOwner } from '../../access/isAdminOrEditorOrOwner'
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
@@ -10,6 +12,8 @@ import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
+import { setCreatedBy } from '../../hooks/setCreatedBy'
+import { preventUnauthorizedPublish } from '../../hooks/preventUnauthorizedPublish'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { revalidateDelete, revalidatePage } from './hooks/revalidatePage'
 
@@ -25,9 +29,9 @@ export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
   access: {
     create: authenticated,
-    delete: authenticated,
+    delete: isAdminOrEditorOrOwner,
     read: authenticatedOrPublished,
-    update: authenticated,
+    update: isAdminOrEditorOrOwner,
   },
   // This config controls what's populated by default when a page is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -117,11 +121,24 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
+    {
+      name: 'createdBy',
+      type: 'relationship',
+      access: {
+        update: isAdmin,
+      },
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+      },
+      hasMany: false,
+      relationTo: 'users',
+    },
     slugField(),
   ],
   hooks: {
     afterChange: [revalidatePage],
-    beforeChange: [populatePublishedAt],
+    beforeChange: [populatePublishedAt, setCreatedBy, preventUnauthorizedPublish],
     afterDelete: [revalidateDelete],
   },
   versions: {

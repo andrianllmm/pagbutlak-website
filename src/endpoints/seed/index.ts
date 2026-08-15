@@ -118,14 +118,20 @@ export const seed = async ({
     }
   }
 
-  payload.logger.info(`— Seeding demo author and user...`)
+  payload.logger.info(`— Seeding demo author and users...`)
 
   await payload.delete({
     collection: 'users',
     depth: 0,
     where: {
       email: {
-        in: ['demo-author@example.com', 'demo-user@example.com'],
+        in: [
+          'demo-author@example.com',
+          'demo-user@example.com',
+          'demo-admin@example.com',
+          'demo-editor@example.com',
+          'demo-writer@example.com',
+        ],
       },
     },
   })
@@ -134,13 +140,32 @@ export const seed = async ({
 
   const image = loadLocalFile('image.jpg')
 
-  const [, imageDoc] = await Promise.all([
+  const [adminUser, editorUser, writerUser, imageDoc] = await Promise.all([
     payload.create({
       collection: 'users',
       data: {
-        name: 'Demo User',
-        email: 'demo-user@example.com',
+        name: 'Demo Admin',
+        email: 'demo-admin@example.com',
         password: 'demo-password',
+        role: 'admin',
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Demo Editor',
+        email: 'demo-editor@example.com',
+        password: 'demo-password',
+        role: 'editor',
+      },
+    }),
+    payload.create({
+      collection: 'users',
+      data: {
+        name: 'Demo Writer',
+        email: 'demo-writer@example.com',
+        password: 'demo-password',
+        role: 'writer',
       },
     }),
     payload.create({
@@ -201,6 +226,15 @@ export const seed = async ({
     ),
   )
 
+  await payload.update({
+    collection: 'users',
+    id: writerUser.id,
+    depth: 0,
+    data: {
+      author: authors[1].id,
+    },
+  })
+
   payload.logger.info(`— Seeding articles...`)
 
   // Do not create articles with `Promise.all` because we want the articles to be created in order
@@ -216,7 +250,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: articleData,
+      data: { ...articleData, createdBy: writerUser.id },
     })
   }
 
@@ -233,7 +267,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: multimediaData,
+      data: { ...multimediaData, createdBy: writerUser.id },
     })
     multimediaIdsByTitle.set(multimediaData.title, multimediaDoc.id)
   }
@@ -305,6 +339,7 @@ export const seed = async ({
         publishedAt,
         coverImage: coverImageDoc.id,
         pdf: pdfDoc.id,
+        createdBy: editorUser.id,
         _status: 'published',
       },
     })
@@ -330,7 +365,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: about({ metaImage: imageDoc }),
+      data: { ...about({ metaImage: imageDoc }), createdBy: adminUser.id },
     }),
     payload.create({
       collection: 'pages',
@@ -338,7 +373,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: contact({ form: contactFormDoc, metaImage: imageDoc }),
+      data: { ...contact({ form: contactFormDoc, metaImage: imageDoc }), createdBy: adminUser.id },
     }),
     payload.create({
       collection: 'pages',
@@ -346,7 +381,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: terms({ metaImage: imageDoc }),
+      data: { ...terms({ metaImage: imageDoc }), createdBy: adminUser.id },
     }),
     payload.create({
       collection: 'pages',
@@ -354,7 +389,7 @@ export const seed = async ({
       context: {
         disableRevalidate: true,
       },
-      data: privacy({ metaImage: imageDoc }),
+      data: { ...privacy({ metaImage: imageDoc }), createdBy: adminUser.id },
     }),
   ])
 

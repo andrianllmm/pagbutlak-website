@@ -18,6 +18,7 @@ import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { preventUnauthorizedSchedulePublish } from '@/hooks/preventUnauthorizedSchedulePublish'
 import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
@@ -92,6 +93,18 @@ export default buildConfig({
         return authHeader === `Bearer ${process.env.CRON_SECRET}`
       },
     },
+    // jobs.queue() skips collection hooks by default; needed for preventUnauthorizedSchedulePublish.
+    runHooks: true,
+    jobsCollectionOverrides: ({ defaultJobsCollection }) => ({
+      ...defaultJobsCollection,
+      hooks: {
+        ...defaultJobsCollection.hooks,
+        beforeChange: [
+          ...(defaultJobsCollection.hooks?.beforeChange ?? []),
+          preventUnauthorizedSchedulePublish,
+        ],
+      },
+    }),
     tasks: [],
   },
 })

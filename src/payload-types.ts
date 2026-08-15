@@ -217,6 +217,7 @@ export interface Page {
     description?: string | null;
   };
   publishedAt?: string | null;
+  createdBy?: (number | null) | User;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -262,6 +263,7 @@ export interface Article {
   };
   publishedAt?: string | null;
   authors: (number | Author)[];
+  createdBy?: (number | null) | User;
   readingTimeMinutes?: number | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -440,6 +442,37 @@ export interface Author {
   slug: string;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name?: string | null;
+  role: 'admin' | 'editor' | 'writer';
+  /**
+   * Link to a byline Author profile for credit purposes (optional).
+   */
+  author?: (number | null) | Author;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -806,6 +839,7 @@ export interface Multimedia {
   categories?: (number | Category)[] | null;
   relatedMultimedia?: (number | Multimedia)[] | null;
   publishedAt?: string | null;
+  createdBy?: (number | null) | User;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -827,36 +861,11 @@ export interface Issue {
   coverImage: number | Media;
   pdf: number | Media;
   description?: string | null;
+  createdBy?: (number | null) | User;
   publishedAt?: string | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1191,6 +1200,7 @@ export interface PagesSelect<T extends boolean = true> {
         description?: T;
       };
   publishedAt?: T;
+  createdBy?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1301,6 +1311,7 @@ export interface ArticlesSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   authors?: T;
+  createdBy?: T;
   readingTimeMinutes?: T;
   generateSlug?: T;
   slug?: T;
@@ -1464,6 +1475,7 @@ export interface MultimediaSelect<T extends boolean = true> {
   categories?: T;
   relatedMultimedia?: T;
   publishedAt?: T;
+  createdBy?: T;
   generateSlug?: T;
   slug?: T;
   updatedAt?: T;
@@ -1481,6 +1493,7 @@ export interface IssuesSelect<T extends boolean = true> {
   coverImage?: T;
   pdf?: T;
   description?: T;
+  createdBy?: T;
   publishedAt?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1492,6 +1505,8 @@ export interface IssuesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  role?: T;
+  author?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
