@@ -67,6 +67,16 @@ export const hero: Field = {
       relationTo: 'media',
       required: true,
     },
+    {
+      name: 'centered',
+      type: 'checkbox',
+      admin: {
+        condition: (_, { type } = {}) => type === 'lowImpact',
+        description: 'Center the hero content instead of left-aligning it.',
+      },
+      defaultValue: false,
+      label: 'Center Content',
+    },
   ],
   label: false,
 }

@@ -208,6 +208,10 @@ export interface Page {
         }[]
       | null;
     media?: (number | null) | Media;
+    /**
+     * Center the hero content instead of left-aligning it.
+     */
+    centered?: boolean | null;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
@@ -529,6 +533,10 @@ export interface CallToActionBlock {
  * via the `definition` "ContentBlock".
  */
 export interface ContentBlock {
+  /**
+   * Center the column content instead of left-aligning it.
+   */
+  centered?: boolean | null;
   columns?:
     | {
         size?: ('oneThird' | 'half' | 'twoThirds' | 'full') | null;
@@ -1201,6 +1209,7 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
+        centered?: T;
       };
   layout?:
     | T
@@ -1255,6 +1264,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
  * via the `definition` "ContentBlock_select".
  */
 export interface ContentBlockSelect<T extends boolean = true> {
+  centered?: T;
   columns?:
     | T
     | {

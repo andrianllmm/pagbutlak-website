@@ -68,6 +68,15 @@ export const Content: Block = {
   interfaceName: 'ContentBlock',
   fields: [
     {
+      name: 'centered',
+      type: 'checkbox',
+      admin: {
+        description: 'Center the column content instead of left-aligning it.',
+      },
+      defaultValue: false,
+      label: 'Center Content',
+    },
+    {
       name: 'columns',
       type: 'array',
       admin: {
