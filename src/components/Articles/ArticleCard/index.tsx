@@ -6,7 +6,7 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { Badge } from '../../ui/badge'
-import { CardMeta } from '../CardMeta'
+import { CardMeta } from '@/components/CardMeta'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { formatReadingTime } from '@/utilities/readingTime'
