@@ -1,14 +1,11 @@
 import { differenceInMinutes } from 'date-fns'
 
+import { SITE_TIME_ZONE } from '@/constants/timeZone'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
-
-// Fixed to UP Visayas' timezone so server and client render the same date
-// regardless of the host machine's local timezone (avoids hydration mismatches).
-const HUMAN_DATE_TIME_ZONE = 'Asia/Manila'
 
 const getManilaDayKey = (date: Date): number => {
   const parts = new Intl.DateTimeFormat('en-US', {
-    timeZone: HUMAN_DATE_TIME_ZONE,
+    timeZone: SITE_TIME_ZONE,
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -23,7 +20,7 @@ const formatManilaTime = (date: Date): string =>
   date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: '2-digit',
-    timeZone: HUMAN_DATE_TIME_ZONE,
+    timeZone: SITE_TIME_ZONE,
   })
 
 // Humanizes a date relative to `now`: "Just now", "10 mins ago",
