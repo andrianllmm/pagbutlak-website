@@ -24,6 +24,12 @@ describe('getPasswordStrengthError', () => {
     expect(error).toBeTruthy()
   })
 
+  it('rejects passwords derived from the site name/branding', () => {
+    const error = getPasswordStrengthError({ password: 'pagbutlak', userInputs: [] })
+
+    expect(error).toBeTruthy()
+  })
+
   it('accepts a strong, unrelated password', () => {
     const error = getPasswordStrengthError({
       password: 'xK9!mQ2wZv#Lp7Fj',
