@@ -21,13 +21,21 @@ export const preventUnauthorizedSchedulePublish: CollectionBeforeChangeHook = as
 
   // Schedule Publish calls jobs.queue() without req, so req.user is empty;
   // fall back to the user id recorded in data.input.user.
-  const actingUser =
-    req.user ??
-    (data.input?.user
-      ? await req.payload
-          .findByID({ id: data.input.user, collection: 'users', depth: 0 })
-          .catch(() => null)
-      : null)
+  let actingUser = req.user
+
+  if (!actingUser) {
+    if (!data.input?.user) {
+      throw new APIError('Unable to verify the acting user for schedule publishing.', 403)
+    }
+
+    // Fail closed: if the user lookup errors, treat it as unauthorized rather
+    // than silently letting the schedule-publish job through unchecked.
+    actingUser = await req.payload
+      .findByID({ id: data.input.user, collection: 'users', depth: 0 })
+      .catch(() => {
+        throw new APIError('Unable to verify the acting user for schedule publishing.', 403)
+      })
+  }
 
   if (actingUser?.role === 'writer') {
     throw new APIError('Only editors and admins can schedule publishing.', 403)

@@ -45,6 +45,37 @@ describe('preventUnauthorizedSchedulePublish', () => {
     ).rejects.toThrow()
   })
 
+  it('fails closed when the user lookup errors (does not let the job through)', async () => {
+    await expect(
+      preventUnauthorizedSchedulePublish(
+        args({
+          data: {
+            taskSlug: 'schedulePublish',
+            input: { doc: { relationTo: 'articles' }, user: 5 },
+          },
+          req: {
+            payload: {
+              findByID: async () => {
+                throw new Error('lookup failed')
+              },
+            },
+          } as never,
+        }),
+      ),
+    ).rejects.toThrow()
+  })
+
+  it('fails closed when neither req.user nor data.input.user is available', async () => {
+    await expect(
+      preventUnauthorizedSchedulePublish(
+        args({
+          data: { taskSlug: 'schedulePublish', input: { doc: { relationTo: 'articles' } } },
+          req: { payload: { findByID: async () => null } } as never,
+        }),
+      ),
+    ).rejects.toThrow()
+  })
+
   it('does not throw when an editor or admin schedules a publish', async () => {
     await expect(
       preventUnauthorizedSchedulePublish(
