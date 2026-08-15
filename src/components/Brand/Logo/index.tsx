@@ -3,15 +3,17 @@ import React from 'react'
 
 interface Props {
   className?: string
+  style?: React.CSSProperties
 }
 
-export const Logo = ({ className }: Props) => {
+export const Logo = ({ className, style }: Props) => {
   return (
     <svg
       id="Logo"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 1024 1024"
       className={clsx('h-[48px] text-foreground', className)}
+      style={style}
     >
       <g id="Logo-2" data-name="Logo">
         <path

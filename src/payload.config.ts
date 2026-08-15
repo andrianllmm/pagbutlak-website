@@ -34,9 +34,18 @@ export default buildConfig({
       // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
       // Feel free to delete this at any time. Simply remove the line below.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      graphics: {
+        Icon: '@/components/AdminGraphics/Icon',
+        Logo: '@/components/AdminGraphics/Logo',
+      },
     },
     importMap: {
       baseDir: path.resolve(dirname),
+    },
+    meta: {
+      titleSuffix: ' | Pagbutlak CMS',
+      description:
+        'Content management system for UPV Pagbutlak, the official student and community publication of UP Visayas - College of Arts and Sciences.',
     },
     user: Users.slug,
     livePreview: {
