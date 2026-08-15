@@ -76,6 +76,12 @@ export default buildConfig({
   ],
   secret: process.env.PAYLOAD_SECRET,
   sharp,
+  upload: {
+    limits: {
+      // Ceiling for the multipart parser; per-mimetype limits are enforced in Media's beforeValidate hook
+      fileSize: 100 * 1024 * 1024, // 100MB
+    },
+  },
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },

@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 
 import {
   FixedToolbarFeature,
@@ -6,6 +6,7 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 import path from 'path'
+import { APIError } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
@@ -13,6 +14,24 @@ import { authenticated } from '../access/authenticated'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024 // 10MB
+const MAX_PDF_SIZE = 75 * 1024 * 1024 // 75MB
+
+const enforceFileSizeLimits: CollectionBeforeValidateHook = ({ req }) => {
+  const file = req.file
+  if (!file) return
+
+  const isPDF = file.mimetype === 'application/pdf'
+  const maxSize = isPDF ? MAX_PDF_SIZE : MAX_IMAGE_SIZE
+
+  if (file.size > maxSize) {
+    throw new APIError(
+      `File exceeds the maximum allowed size of ${maxSize / (1024 * 1024)}MB for ${isPDF ? 'PDFs' : 'images'}.`,
+      400,
+    )
+  }
+}
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -22,6 +41,9 @@ export const Media: CollectionConfig = {
     delete: authenticated,
     read: anyone,
     update: authenticated,
+  },
+  hooks: {
+    beforeValidate: [enforceFileSizeLimits],
   },
   fields: [
     {
@@ -44,6 +66,7 @@ export const Media: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',
     focalPoint: true,
+    mimeTypes: ['image/*', 'application/pdf'],
     imageSizes: [
       {
         name: 'thumbnail',
