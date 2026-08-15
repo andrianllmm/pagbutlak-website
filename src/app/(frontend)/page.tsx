@@ -13,8 +13,10 @@ import { HomeSectionRow } from '@/components/HomeSectionRow'
 import { IssueCard } from '@/components/Issues/IssueCard'
 import { MultimediaSectionRow } from '@/components/MultimediaSectionRow'
 import { SectionsNav } from '@/components/SectionsNav'
+import { JsonLd } from '@/components/JsonLd'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getWebSiteSchema } from '@/utilities/structuredData'
 import type { CardDoc } from '@/components/Articles/ArticleCard'
 
 const HOME_DESCRIPTION =
@@ -117,6 +119,7 @@ export default async function Page() {
 
   return (
     <article className="pb-24">
+      <JsonLd data={getWebSiteSchema()} />
       <HomeMasthead />
       <SectionsNav />
 

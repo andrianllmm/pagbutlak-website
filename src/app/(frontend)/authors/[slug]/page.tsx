@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { JsonLd } from '@/components/JsonLd'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -15,6 +16,7 @@ import { ArticleCard } from '@/components/Articles/ArticleCard'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getPersonSchema } from '@/utilities/structuredData'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -103,6 +105,7 @@ export default async function AuthorPage({ params: paramsPromise }: Args) {
 
   return (
     <div className="pt-12 pb-16">
+      <JsonLd data={getPersonSchema(author)} />
       <PayloadRedirects disableNotFound url={url} />
 
       {/* Author profile */}

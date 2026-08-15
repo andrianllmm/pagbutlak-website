@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { Link as LinkIcon } from 'lucide-react'
+import { JsonLd } from '@/components/JsonLd'
 import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs'
 import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
 import { MULTIMEDIA_PLATFORM_ICONS } from '@/components/Multimedia/platformIcons'
@@ -8,6 +9,7 @@ import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getVideoObjectSchema } from '@/utilities/structuredData'
 import { getPlatformFromUrl } from '@/utilities/multimediaEmbed'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -47,6 +49,7 @@ export default async function MultimediaPage({ params: paramsPromise }: Args) {
 
   return (
     <article className="pt-12 pb-16">
+      <JsonLd data={getVideoObjectSchema(item)} />
       <div className="max-w-[56rem] mx-auto px-4 md:px-6 lg:grid lg:grid-cols-[minmax(0,20rem)_1fr] lg:gap-8 lg:items-start">
         <MultimediaEmbedTabs
           className="mx-auto lg:sticky"

@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { RelatedArticles } from '@/blocks/RelatedArticles/Component'
+import { JsonLd } from '@/components/JsonLd'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
@@ -9,6 +10,7 @@ import React, { cache } from 'react'
 import RichText from '@/components/RichText'
 import { ArticleHero } from '@/heros/ArticleHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getArticleSchema } from '@/utilities/structuredData'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { AuthorPreviewCard } from '@/components/Authors/AuthorPreviewCard'
@@ -54,6 +56,8 @@ export default async function ArticlePage({ params: paramsPromise }: Args) {
   return (
     <article className="pt-12 pb-16">
       <PageClient />
+
+      <JsonLd data={getArticleSchema(article)} />
 
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />

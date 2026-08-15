@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { Download } from 'lucide-react'
+import { JsonLd } from '@/components/JsonLd'
 import { Media } from '@/components/Media'
 import { PDFViewer } from '@/components/PDFViewer'
 import { Button } from '@/components/ui/button'
@@ -8,6 +9,7 @@ import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { mergeTwitter } from '@/utilities/mergeTwitter'
+import { getIssueSchema } from '@/utilities/structuredData'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { draftMode } from 'next/headers'
@@ -52,6 +54,7 @@ export default async function IssuePage({ params: paramsPromise }: Args) {
 
   return (
     <article className="pt-12 pb-16">
+      <JsonLd data={getIssueSchema(item)} />
       <div className="container max-w-[56rem]">
         <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,16rem)_1fr] gap-8 items-start mb-12">
           {item.coverImage && typeof item.coverImage === 'object' && (
