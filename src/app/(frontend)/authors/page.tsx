@@ -46,7 +46,7 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
-  const title = 'Pagbutlak Authors'
+  const title = 'Authors | Pagbutlak'
   const description = 'Meet the writers and editors of Pagbutlak, UPV CAS.'
 
   return {

@@ -62,7 +62,7 @@ export default async function Page() {
 }
 
 export function generateMetadata(): Metadata {
-  const title = `Pagbutlak Articles`
+  const title = `Articles | Pagbutlak`
   const description = 'Browse all articles from Pagbutlak, UPV CAS.'
 
   return {

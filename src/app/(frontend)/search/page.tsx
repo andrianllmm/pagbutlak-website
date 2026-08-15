@@ -149,7 +149,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 }
 
 export function generateMetadata(): Metadata {
-  const title = `Pagbutlak Search`
+  const title = `Search | Pagbutlak`
   const description = 'Search articles and multimedia from Pagbutlak, UPV CAS.'
 
   return {

@@ -146,7 +146,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const category = await queryCategoryBySlug({ slug })
 
   if (!category) {
-    return { title: 'Pagbutlak Categories' }
+    return { title: 'Categories | Pagbutlak' }
   }
 
   const title = `${category.title} Page ${pageNumber || ''} | Pagbutlak`
