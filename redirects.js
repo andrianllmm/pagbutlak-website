@@ -12,7 +12,15 @@ const redirects = async () => {
     source: '/:path((?!ie-incompatible.html$).*)', // all pages except the incompatibility page
   }
 
-  const redirects = [internetExplorerRedirect]
+  // Preserves inbound links from the legacy site,
+  // which used root-level date-based permalinks
+  const dateBasedArticleRedirect = {
+    source: '/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})/:slug',
+    destination: '/articles/:slug',
+    permanent: true,
+  }
+
+  const redirects = [internetExplorerRedirect, dateBasedArticleRedirect]
 
   return redirects
 }
