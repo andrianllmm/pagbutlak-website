@@ -1,6 +1,7 @@
 <!-- PROJECT SHIELDS -->
 
 [![Build Status][build-status-shield]][build-status-url]
+[![Vercel][vercel-shield]][vercel-url]
 [![License][license-shield]][license-url]
 [![Stars][stars-shield]][stars-url]
 
@@ -129,6 +130,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
 [build-status-shield]: https://img.shields.io/github/actions/workflow/status/pagbutlakupv/website/ci.yml?style=flat-square
 [build-status-url]: https://github.com/pagbutlakupv/website/actions
+[vercel-shield]: https://vercelbadge.vercel.app/api/pagbutlakupv/website?style=flat-square
+[vercel-url]: https://vercel.com/pagbutlak-devs/website
 [license-shield]: https://img.shields.io/github/license/pagbutlakupv/website.svg?style=flat-square&color=7E102C
 [license-url]: https://github.com/pagbutlakupv/website/blob/main/LICENSE
 [stars-shield]: https://img.shields.io/github/stars/pagbutlakupv/website.svg?style=flat-square&color=7E102C
