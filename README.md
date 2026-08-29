@@ -121,6 +121,10 @@ Contributions are welcome!
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 
+## License
+
+Distributed under the [Apache License 2.0](LICENSE).
+
 ## Acknowledgments
 
 - [Payload Website Template](https://github.com/payloadcms/payload/blob/main/templates/website) for bootstrapping the project
