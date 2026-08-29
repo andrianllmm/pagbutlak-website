@@ -60,6 +60,10 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: contentSecurityPolicy,
           },
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
         ],
       },
     ]
