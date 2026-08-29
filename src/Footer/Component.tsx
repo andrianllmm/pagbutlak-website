@@ -30,7 +30,7 @@ export async function Footer() {
     <footer className="mt-auto border-t border-border">
       <div className="container py-12 grid grid-cols-1 gap-12 md:grid-cols-[minmax(0,1fr)_2fr]">
         <div className="flex flex-col items-start gap-4">
-          <Link href="/">
+          <Link href="/" aria-label="Pagbutlak home">
             <Wordmark className="h-8 text-foreground" />
           </Link>
 
