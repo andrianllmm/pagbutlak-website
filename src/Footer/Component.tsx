@@ -30,7 +30,7 @@ export async function Footer() {
     <footer className="mt-auto border-t border-border">
       <div className="container py-12 grid grid-cols-1 gap-12 md:grid-cols-[minmax(0,1fr)_2fr]">
         <div className="flex flex-col items-start gap-4">
-          <Link href="/">
+          <Link href="/" aria-label="Pagbutlak home">
             <Wordmark className="h-8 text-foreground" />
           </Link>
 
@@ -55,23 +55,30 @@ export async function Footer() {
         </div>
 
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-          {(navGroups || []).map((group, i) => (
-            <div key={i}>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-foreground">
-                {group.title}
-              </h3>
-              <nav className="flex flex-col gap-2">
-                {(group.navItems || []).map(({ link }, j) => (
-                  <CMSLink
-                    key={j}
-                    {...link}
-                    appearance="inline"
-                    className="text-sm text-muted-foreground hover:text-foreground"
-                  />
-                ))}
-              </nav>
-            </div>
-          ))}
+          {(navGroups || []).map((group, i) => {
+            const headingId = `footer-nav-group-${i}`
+
+            return (
+              <div key={i}>
+                <h3
+                  id={headingId}
+                  className="mb-3 text-sm font-semibold uppercase tracking-wide text-foreground"
+                >
+                  {group.title}
+                </h3>
+                <nav className="flex flex-col gap-2" aria-labelledby={headingId}>
+                  {(group.navItems || []).map(({ link }, j) => (
+                    <CMSLink
+                      key={j}
+                      {...link}
+                      appearance="inline"
+                      className="text-sm text-muted-foreground hover:text-foreground"
+                    />
+                  ))}
+                </nav>
+              </div>
+            )
+          })}
         </div>
       </div>
 

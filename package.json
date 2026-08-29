@@ -72,15 +72,17 @@
     "react-day-picker": "^10.0.1",
     "react-dom": "19.1.0",
     "react-hook-form": "7.45.4",
-    "sharp": "0.34.2",
+    "sharp": "0.35.4",
     "tailwind-merge": "^2.6.1",
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@commitlint/cli": "^20.4.2",
     "@commitlint/config-conventional": "^20.4.2",
     "@commitlint/prompt-cli": "^20.4.2",
     "@eslint/eslintrc": "^3.3.4",
+    "@next/eslint-plugin-next": "15.5.19",
     "@playwright/test": "1.58.2",
     "@tailwindcss/typography": "^0.5.19",
     "@testing-library/react": "16.3.0",
@@ -93,6 +95,7 @@
     "copyfiles": "^2.4.1",
     "eslint": "^9.39.3",
     "eslint-config-next": "15.5.19",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "husky": "^8.0.3",
     "jsdom": "26.1.0",
     "lint-staged": "^16.3.0",
@@ -115,7 +118,20 @@
       "sharp",
       "esbuild",
       "unrs-resolver"
-    ]
+    ],
+    "overrides": {
+      "esbuild": ">=0.28.1",
+      "dompurify": ">=3.4.14",
+      "postcss": ">=8.5.23",
+      "undici": ">=7.29.0",
+      "nodemailer": ">=9.0.1",
+      "js-yaml": ">=4.3.1",
+      "immutable": ">=4.3.9",
+      "fast-uri": ">=3.1.5",
+      "nanoid": ">=3.3.18",
+      "brace-expansion": ">=5.0.9",
+      "sharp": ">=0.35.0"
+    }
   },
   "lint-staged": {
     "*.{js,ts,tsx,jsx}": [

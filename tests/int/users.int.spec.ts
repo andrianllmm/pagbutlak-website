@@ -3,6 +3,8 @@ import config from '@/payload.config'
 
 import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest'
 
+import { createTestUser, seedAdmin } from './helpers'
+
 let payload: Payload
 let seededAdminId: number | string
 const createdUserEmails: string[] = []
@@ -11,18 +13,7 @@ describe('Users password strength', () => {
   beforeAll(async () => {
     payload = await getPayload({ config })
 
-    // Seed an admin so the users collection isn't empty (which would make
-    // the next created user the "first" user and force it to admin).
-    const seededAdmin = await payload.create({
-      collection: 'users',
-      data: {
-        name: 'Seed Admin',
-        email: 'seed-admin-password-spec@example.com',
-        password: 'a-real-password-123',
-        role: 'admin',
-      },
-      overrideAccess: true,
-    })
+    const seededAdmin = await seedAdmin(payload, 'seed-admin-password-spec@example.com')
     seededAdminId = seededAdmin.id
   }, 30000)
 
@@ -132,5 +123,73 @@ describe('Users password strength', () => {
         overrideAccess: true,
       }),
     ).rejects.toThrow()
+  })
+})
+
+describe('Users role field access', () => {
+  let seededAdminId: number | string
+  let adminUser: Awaited<ReturnType<typeof payload.create>>
+  let writerUser: Awaited<ReturnType<typeof payload.create>>
+
+  beforeAll(async () => {
+    payload = await getPayload({ config })
+
+    // Must resolve before the other creates.
+    const seededAdmin = await seedAdmin(payload, 'seed-admin-role-spec@example.com')
+    seededAdminId = seededAdmin.id
+
+    const [admin, writer] = await Promise.all([
+      createTestUser(payload, {
+        name: 'Role Admin',
+        email: 'role-admin@example.com',
+        role: 'admin',
+      }),
+      createTestUser(payload, {
+        name: 'Role Writer',
+        email: 'role-writer@example.com',
+        role: 'writer',
+      }),
+    ])
+    adminUser = admin
+    writerUser = writer
+  }, 30000)
+
+  afterAll(async () => {
+    await payload.delete({ collection: 'users', id: seededAdminId, overrideAccess: true })
+    await payload.delete({ collection: 'users', id: adminUser.id, overrideAccess: true })
+    await payload.delete({ collection: 'users', id: writerUser.id, overrideAccess: true })
+  })
+
+  it('silently drops a role change attempted by a writer on their own account', async () => {
+    // Field-level access failures don't throw - Payload silently omits the
+    // disallowed field from the update instead of rejecting the request.
+    const updated = await payload.update({
+      collection: 'users',
+      id: writerUser.id,
+      data: { role: 'admin' },
+      overrideAccess: false,
+      user: writerUser as never,
+    })
+
+    expect(updated.role).toBe('writer')
+
+    const reread = await payload.findByID({
+      collection: 'users',
+      id: writerUser.id,
+      overrideAccess: true,
+    })
+    expect(reread.role).toBe('writer')
+  })
+
+  it('allows an admin to change another user role', async () => {
+    const updated = await payload.update({
+      collection: 'users',
+      id: writerUser.id,
+      data: { role: 'editor' },
+      overrideAccess: false,
+      user: adminUser as never,
+    })
+
+    expect(updated.role).toBe('editor')
   })
 })
