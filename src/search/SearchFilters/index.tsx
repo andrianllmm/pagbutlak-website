@@ -120,11 +120,14 @@ export function SearchFilters({ sections, authors, categories, children }: Searc
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline">
+          <Button
+            variant="outline"
+            aria-label={hasActiveFilters ? `Filters, ${activeFilterCount} active` : 'Filters'}
+          >
             <ListFilter className="h-4 w-4 sm:mr-1" />
             <span className="hidden sm:inline">Filters</span>
             {hasActiveFilters && (
-              <Badge variant="outline" className="ml-1">
+              <Badge variant="outline" className="ml-1" aria-hidden="true">
                 {activeFilterCount}
               </Badge>
             )}
