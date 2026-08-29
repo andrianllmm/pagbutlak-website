@@ -127,9 +127,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for more information.
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[build-status-shield]: https://github.com/pagbutlakupv/website/actions/workflows/ci.yml/badge.svg
+[build-status-shield]: https://img.shields.io/github/actions/workflow/status/pagbutlakupv/website/ci.yml?style=flat-square
 [build-status-url]: https://github.com/pagbutlakupv/website/actions
-[license-shield]: https://img.shields.io/github/license/pagbutlakupv/website.svg
+[license-shield]: https://img.shields.io/github/license/pagbutlakupv/website.svg?style=flat-square&color=7E102C
 [license-url]: https://github.com/pagbutlakupv/website/blob/main/LICENSE
-[stars-shield]: https://img.shields.io/github/stars/pagbutlakupv/website.svg?style=social&label=Star
+[stars-shield]: https://img.shields.io/github/stars/pagbutlakupv/website.svg?style=flat-square&color=7E102C
 [stars-url]: https://github.com/pagbutlakupv/website/stargazers
