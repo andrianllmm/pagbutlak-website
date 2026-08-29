@@ -41,7 +41,7 @@ This project is the official website for the student and community publication o
 1. Start the services
 
    ```bash
-   docker-compose up
+   docker compose up
    ```
 
 ### Usage
