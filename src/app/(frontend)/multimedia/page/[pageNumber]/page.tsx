@@ -18,6 +18,7 @@ const MULTIMEDIA_SELECT = {
   thumbnail: true,
   autoThumbnailUrl: true,
   publishedAt: true,
+  categories: true,
 } as const
 
 type Args = {

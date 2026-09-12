@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 
 import { Link as LinkIcon } from 'lucide-react'
+import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { JsonLd } from '@/components/JsonLd'
 import { MultimediaEmbedTabs } from '@/components/Multimedia/MultimediaEmbedTabs'
 import { RelatedMultimedia } from '@/components/Multimedia/RelatedMultimedia'
@@ -58,6 +59,16 @@ export default async function MultimediaPage({ params: paramsPromise }: Args) {
         />
 
         <div className="mt-6 lg:mt-0">
+          {item.categories && item.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {item.categories.map((category) => {
+                if (typeof category !== 'object' || category === null) return null
+
+                return <CategoryBadge key={category.id} category={category} />
+              })}
+            </div>
+          )}
+
           <div className="prose dark:prose-invert max-w-none mb-4">
             <h1>{item.title}</h1>
           </div>
@@ -162,6 +173,7 @@ const queryMultimediaBySlug = cache(async ({ slug }: { slug: string }) => {
       relatedMultimedia: true,
       thumbnail: true,
       autoThumbnailUrl: true,
+      categories: true,
     },
     where: {
       slug: {
