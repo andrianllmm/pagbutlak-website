@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { Link as LinkIcon, Play } from 'lucide-react'
 import React from 'react'
 
+import { CategoryBadge } from '@/components/Categories/CategoryBadge'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
@@ -12,7 +13,7 @@ import type { Multimedia } from '@/payload-types'
 
 export type CardDoc = Pick<
   Multimedia,
-  'slug' | 'title' | 'links' | 'thumbnail' | 'autoThumbnailUrl' | 'publishedAt'
+  'slug' | 'title' | 'links' | 'thumbnail' | 'autoThumbnailUrl' | 'publishedAt' | 'categories'
 >
 
 function getThumbnailSrc(doc: CardDoc): string | null {
@@ -34,7 +35,7 @@ export const MultimediaCard: React.FC<{
   doc: CardDoc
 }> = ({ className, doc }) => {
   const { card, link } = useClickableCard({})
-  const { slug, title, links, publishedAt } = doc
+  const { slug, title, links, publishedAt, categories } = doc
 
   const href = `/multimedia/${slug}`
   const thumbnailSrc = getThumbnailSrc(doc)
@@ -71,6 +72,16 @@ export const MultimediaCard: React.FC<{
             </Link>
           </h3>
         </div>
+
+        {categories && categories.length > 0 && (
+          <div className="flex flex-wrap gap-1 mb-1">
+            {categories.map((category) => {
+              if (typeof category !== 'object' || category === null) return null
+
+              return <CategoryBadge key={category.id} category={category} />
+            })}
+          </div>
+        )}
 
         <div className="text-xs text-muted-foreground flex flex-wrap items-center gap-2">
           {links?.map((item, index) => {
