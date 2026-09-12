@@ -14,7 +14,6 @@ import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { isAdmin } from '../../access/isAdmin'
 import { isAdminOrEditorOrOwner } from '../../access/isAdminOrEditorOrOwner'
 import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { setCreatedBy } from '../../hooks/setCreatedBy'
 import { preventUnauthorizedPublish } from '../../hooks/preventUnauthorizedPublish'
@@ -104,7 +103,7 @@ export const Articles: CollectionConfig<'articles'> = {
                   return [
                     ...rootFeatures,
                     HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    BlocksFeature({ blocks: [Banner, MediaBlock] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
