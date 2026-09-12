@@ -1,6 +1,6 @@
 export const READING_TIME_WORDS_PER_MINUTE = 200
 
-const READING_TIME_CONTENT_KEYS = new Set(['text', 'code'])
+const READING_TIME_CONTENT_KEYS = new Set(['text'])
 
 const collectReadingTimeText = (value: unknown, segments: string[]): void => {
   if (!value) {

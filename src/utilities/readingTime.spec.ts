@@ -39,30 +39,18 @@ const createContent = (...children: unknown[]) => ({
 })
 
 describe('readingTime', () => {
-  it('extracts readable text and code from lexical content', () => {
-    const content = createContent(
-      createParagraph('Alpha beta gamma'),
-      {
-        type: 'block',
-        fields: {
-          blockType: 'code',
-          code: 'const answer = 42',
-        },
-        format: '',
-        version: 2,
+  it('extracts readable text from lexical content', () => {
+    const content = createContent(createParagraph('Alpha beta gamma'), {
+      type: 'block',
+      fields: {
+        blockType: 'banner',
+        content: createContent(createParagraph('Delta epsilon')),
       },
-      {
-        type: 'block',
-        fields: {
-          blockType: 'banner',
-          content: createContent(createParagraph('Delta epsilon')),
-        },
-        format: '',
-        version: 2,
-      },
-    )
+      format: '',
+      version: 2,
+    })
 
-    expect(extractReadingTimeText(content)).toBe('Alpha beta gamma const answer = 42 Delta epsilon')
+    expect(extractReadingTimeText(content)).toBe('Alpha beta gamma Delta epsilon')
   })
 
   it('rounds up using the 200 wpm baseline', () => {
