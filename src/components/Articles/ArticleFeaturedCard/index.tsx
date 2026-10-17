@@ -9,6 +9,7 @@ import { CardMeta } from '@/components/CardMeta'
 import { formatAuthors } from '@/utilities/formatAuthors'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
 import { formatReadingTime } from '@/utilities/readingTime'
+import { getCardImage } from '../ArticleCard'
 import type { CardDoc } from '../ArticleCard'
 
 export const ArticleFeaturedCard: React.FC<{
@@ -21,7 +22,8 @@ export const ArticleFeaturedCard: React.FC<{
 
   const { slug, meta, title, authors, publishedAt, readingTimeMinutes } = doc || {}
 
-  const { description, image: metaImage } = meta || {}
+  const { description } = meta || {}
+  const cardImage = getCardImage(doc)
 
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
   const authorLabel = authors ? formatAuthors(authors) : ''
@@ -63,10 +65,10 @@ export const ArticleFeaturedCard: React.FC<{
         )}
       </div>
 
-      {metaImage && typeof metaImage !== 'string' && (
+      {cardImage && typeof cardImage === 'object' && (
         <div className="order-1 md:order-2 md:col-span-3 rounded-lg w-full aspect-[16/9] md:aspect-auto md:h-full overflow-hidden">
           <Media
-            resource={metaImage}
+            resource={cardImage}
             size="50vw"
             className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
           />

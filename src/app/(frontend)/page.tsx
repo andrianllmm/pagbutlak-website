@@ -28,6 +28,7 @@ const ARTICLE_SELECT = {
   categories: true,
   readingTimeMinutes: true,
   meta: true,
+  heroImage: true,
   publishedAt: true,
   authors: true,
 } as const

@@ -6,6 +6,7 @@ import React from 'react'
 
 import { Media } from '@/components/Media'
 import { formatReadableDate } from '@/utilities/formatReadableDate'
+import { getCardImage } from '../ArticleCard'
 import type { CardDoc } from '../ArticleCard'
 
 export const ArticleCompactCard: React.FC<{
@@ -16,9 +17,9 @@ export const ArticleCompactCard: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo = 'articles' } = props
 
-  const { slug, meta, title, publishedAt } = doc || {}
+  const { slug, title, publishedAt } = doc || {}
 
-  const { image: metaImage } = meta || {}
+  const cardImage = getCardImage(doc)
 
   const href = `/${relationTo}/${slug}`
 
@@ -30,10 +31,10 @@ export const ArticleCompactCard: React.FC<{
       )}
       ref={card.ref}
     >
-      {metaImage && typeof metaImage !== 'string' && (
+      {cardImage && typeof cardImage === 'object' && (
         <div className="rounded-lg w-full aspect-[16/9] overflow-hidden">
           <Media
-            resource={metaImage}
+            resource={cardImage}
             size="25vw"
             className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
           />
