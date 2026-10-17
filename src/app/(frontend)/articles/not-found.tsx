@@ -24,6 +24,7 @@ export default async function NotFound() {
       categories: true,
       readingTimeMinutes: true,
       meta: true,
+      heroImage: true,
       publishedAt: true,
       authors: true,
     },

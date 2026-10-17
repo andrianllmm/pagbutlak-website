@@ -54,6 +54,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       categories: true,
       readingTimeMinutes: true,
       meta: true,
+      heroImage: true,
       publishedAt: true,
       authors: true,
     },

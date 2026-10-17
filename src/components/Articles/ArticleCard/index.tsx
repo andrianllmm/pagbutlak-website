@@ -21,7 +21,14 @@ export type CardCategoryData = {
 
 export type ArticleCardDoc = Pick<
   Article,
-  'slug' | 'categories' | 'meta' | 'title' | 'authors' | 'publishedAt' | 'readingTimeMinutes'
+  | 'slug'
+  | 'categories'
+  | 'meta'
+  | 'heroImage'
+  | 'title'
+  | 'authors'
+  | 'publishedAt'
+  | 'readingTimeMinutes'
 >
 
 export type SearchCardDoc = Pick<Search, 'slug' | 'categories' | 'meta' | 'title'> & {
@@ -31,6 +38,12 @@ export type SearchCardDoc = Pick<Search, 'slug' | 'categories' | 'meta' | 'title
 }
 
 export type CardDoc = ArticleCardDoc | SearchCardDoc
+
+export const getCardImage = (doc?: CardDoc) => {
+  if (!doc) return null
+
+  return doc.meta?.image || ('heroImage' in doc ? doc.heroImage : null)
+}
 
 const normalizeCategories = (
   categories: Article['categories'] | Search['categories'],
@@ -73,7 +86,8 @@ export const ArticleCard: React.FC<{
   const { slug, meta, title, authors, publishedAt, readingTimeMinutes } = doc || {}
 
   const categories = doc ? normalizeCategories(doc.categories) : []
-  const { description, image: metaImage } = meta || {}
+  const { description } = meta || {}
+  const cardImage = getCardImage(doc)
 
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
@@ -89,11 +103,11 @@ export const ArticleCard: React.FC<{
       )}
       ref={card.ref}
     >
-      {/* Meta image */}
-      {metaImage && typeof metaImage !== 'string' && (
+      {/* Card image */}
+      {cardImage && typeof cardImage === 'object' && (
         <div className="mb-4 rounded-lg w-full aspect-[16/9] overflow-hidden">
           <Media
-            resource={metaImage}
+            resource={cardImage}
             size="33vw"
             className="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-110"
           />

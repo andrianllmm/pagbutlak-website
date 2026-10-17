@@ -31,6 +31,7 @@ export async function SectionArchive({ section, sectionLabel, page = 1 }: Props)
       categories: true,
       readingTimeMinutes: true,
       meta: true,
+      heroImage: true,
       publishedAt: true,
       authors: true,
     },
